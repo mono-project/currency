@@ -82,69 +82,88 @@ uint32_t crc32(uint32_t msg) {
 }
 
 void crc256(uint8_t* in, uint32_t len, uint8_t* out){
-	uint8_t   temp[32] = {0};
-	uint32_t* temp_32  = (uint32_t*)temp;
-	uint64_t* temp_64  = (uint64_t*)temp;
-	uint32_t* in_32    = (uint32_t*)in;
-	uint64_t* out_64   = (uint64_t*)out;
+	uint8_t   temp[16]  = {0};
+	uint32_t* temp_32_0 = (uint32_t*)temp;
+	uint32_t* temp_32_1 = &temp_32_0[1];
+	uint32_t* temp_32_2 = &temp_32_0[2];
+	uint32_t* temp_32_3 = &temp_32_0[3];
+	uint64_t* temp_64_0 = (uint64_t*)temp;
+	uint64_t* temp_64_1 = &temp_64_0[1];
+	uint32_t* in_32_0   = (uint32_t*)in;
+	uint32_t* in_32_1   = &in_32_0[1];
+	uint32_t* in_32_2   = &in_32_0[2];
+	uint32_t* in_32_3   = &in_32_0[3];
+	uint32_t* in_32_4   = &in_32_0[4];
+	uint32_t* in_32_5   = &in_32_0[5];
+	uint32_t* in_32_6   = &in_32_0[6];
+	uint32_t* in_32_7   = &in_32_0[7];
+	uint64_t* out_64_0  = (uint64_t*)out;
+	uint64_t* out_64_1  = &out_64_0[1];
+	uint64_t* out_64_2  = &out_64_0[2];
+	uint64_t* out_64_3  = &out_64_0[3];
 
 	for(uint32_t i=0;i<len;i+=32){
-		temp_32[0] = crc32(in_32[i  ]);
-		temp_32[1] = crc32(in_32[i+1]);
-		temp_32[2] = crc32(in_32[i+2]);
-		temp_32[3] = crc32(in_32[i+3]);
-		temp_32[4] = crc32(in_32[i+4]);
-		temp_32[5] = crc32(in_32[i+5]);
-		temp_32[6] = crc32(in_32[i+6]);
-		temp_32[7] = crc32(in_32[i+7]);
-		out_64[0] ^= temp_64[0]; out_64[1] ^= temp_64[1];
-		out_64[2] ^= temp_64[2]; out_64[3] ^= temp_64[3];
+		temp_32_0 = crc32(in_32_0[i]);
+		temp_32_1 = crc32(in_32_1[i]);
+		temp_32_2 = crc32(in_32_2[i]);
+		temp_32_3 = crc32(in_32_3[i]);
+		temp_32_4 = crc32(in_32_4[i]);
+		temp_32_5 = crc32(in_32_5[i]);
+		temp_32_6 = crc32(in_32_6[i]);
+		temp_32_7 = crc32(in_32_7[i]);
+		out_64_0 ^= temp_64_0; out_64_1 ^= temp_64_1;
+		out_64_2 ^= temp_64_0; out_64_3 ^= temp_64_1;
 	}
 }
 
-#ifdef TEST CRC256
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
+void crc512(uint8_t* in, uint32_t len, uint8_t* out){
+	uint8_t   temp[16]  = {0};
+	uint32_t* temp_32_0 = (uint32_t*)temp;
+	uint32_t* temp_32_1 = &temp_32_0[1];
+	uint32_t* temp_32_2 = &temp_32_0[2];
+	uint32_t* temp_32_3 = &temp_32_0[3];
+	uint64_t* temp_64_0 = (uint64_t*)temp;
+	uint64_t* temp_64_1 = &temp_64_0[1];
+	uint32_t* in_32_0   = (uint32_t*)in;
+	uint32_t* in_32_1   = &in_32_0[1];
+	uint32_t* in_32_2   = &in_32_0[2];
+	uint32_t* in_32_3   = &in_32_0[3];
+	uint32_t* in_32_4   = &in_32_0[4];
+	uint32_t* in_32_5   = &in_32_0[5];
+	uint32_t* in_32_6   = &in_32_0[6];
+	uint32_t* in_32_7   = &in_32_0[7];
+	uint64_t* out_64_0  = (uint64_t*)out;
+	uint64_t* out_64_1  = &out_64_0[1];
+	uint64_t* out_64_2  = &out_64_0[2];
+	uint64_t* out_64_3  = &out_64_0[3];
+	uint64_t* out_64_4  = &out_64_0[4];
+	uint64_t* out_64_5  = &out_64_0[5];
+	uint64_t* out_64_6  = &out_64_0[6];
+	uint64_t* out_64_7  = &out_64_0[7];
+	uint32_t  j         = 8;
 
-#define SIZE_32     1073741824 // 1<<30
-#define SIZE_64     SIZE_32>>1 // 1<<29
-#define SIZE_256    SIZE_32>>3 // 1<<27
-#define SIZE_32_32  SIZE_32>>5 // 1<<28
-#define LOG_S_32_32 25         // Log2(SIZE_32_32)
-#define ITERATIONS  2048 // 1<<27
-#define CPS         3200000000 // Cycles per second, default: 3,200,000,000 or 3.2GHz
-
-int main(){
-	uint32_t* cache    = (uint32_t*)calloc(SIZE_32,4);
-	uint8_t*  cache_8  = (uint8_t*)cache;
-	uint64_t* cache_64 = (uint64_t*)cache;
-	uint32_t  stime    = 0;
-	uint32_t  etime    = 0;
-	double    rate     = 0;
-	uint64_t* out_64   = (uint64_t*)cache;
-	uint64_t  s32_4    = SIZE_32;
-	uint64_t  t_cycles = CPS;  // Total cycles, assuming one second per iteration
-	s32_4    = s32_4<<2;
-	t_cycles = t_cycles * ITERATIONS;
-
-	cache_64[0] = 0x8ccc5467f6bd9249; cache_64[1] = 0xddaadef338d9fdc7;
-	cache_64[0] = 0x39720ddd40fd8a32; cache_64[1] = 0x8473643dec63477e;
-	for(uint32_t x=0;x<32;x++)
-		for(uint32_t i=32;i<SIZE_32_32;i++) cache[i+(x<<LOG_S_32_32)] = (cache[i-32+(x<<LOG_S_32_32)]<<x)^i^crc32(cache[i-32+(x<<LOG_S_32_32)]);
-
-	stime = (uint32_t)time(NULL);
-	for(uint32_t j=0;j<ITERATIONS;j++) crc256(cache_8, SIZE_256, cache_8);
-	etime = (uint32_t)time(NULL);
-	etime = etime-stime;
-	rate  = (double)ITERATIONS/etime;
-	s32_4 = s32_4 * etime;
-	printf("CRC256 calculation took %us\n",etime);
-	printf("Processing %fGiB/s\n",rate*SIZE_32*4/1073741824);
-	printf("\tHash uses %f cycles per byte\n",(double)s32_4/t_cycles);
-	printf("\tHash processes %f bytes per cycle\n",(double)t_cycles/s32_4);
-	printf("CRC256 Result: %016jx.%016jx.%016jx.%016jx\n",out_64[0],out_64[1],out_64[2],out_64[3]);
+	for(uint32_t i=0;i<len;i+=64){
+		temp_32_0 = crc32(in_32_0[i]);
+		temp_32_1 = crc32(in_32_1[i]);
+		temp_32_2 = crc32(in_32_2[i]);
+		temp_32_3 = crc32(in_32_3[i]);
+		temp_32_4 = crc32(in_32_4[i]);
+		temp_32_5 = crc32(in_32_5[i]);
+		temp_32_6 = crc32(in_32_6[i]);
+		temp_32_7 = crc32(in_32_7[i]);
+		out_64_0 ^= temp_64_0; out_64_1 ^= temp_64_1;
+		out_64_2 ^= temp_64_0; out_64_3 ^= temp_64_1;
+		temp_32_0 = crc32(in_32_0[j]);
+		temp_32_1 = crc32(in_32_1[j]);
+		temp_32_2 = crc32(in_32_2[j]);
+		temp_32_3 = crc32(in_32_3[j]);
+		temp_32_4 = crc32(in_32_4[j]);
+		temp_32_5 = crc32(in_32_5[j]);
+		temp_32_6 = crc32(in_32_6[j]);
+		temp_32_7 = crc32(in_32_7[j]);
+		out_64_4 ^= temp_64_0; out_64_5 ^= temp_64_1;
+		out_64_6 ^= temp_64_0; out_64_7 ^= temp_64_1;
+		j+=64;
+	}
 }
-
-#endif
