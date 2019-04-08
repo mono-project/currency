@@ -46,7 +46,7 @@ void signRawTx(uint8_t* rawTx, uint8_t* privateKey){
 	// TODO: Sign Tx
 }
 
-uint8_t* blockTemplate(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint32_t txCount, uint32_t difficulty, uint32_t fee, uint32_t timestamp){
+uint8_t* blockTemplate(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp){
 	uint8_t* block         = malloc(180+24*txCount);
 	uint8_t  root[64]      = {0};
 	uint8_t  signature[96] = {0};
