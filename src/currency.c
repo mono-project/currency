@@ -46,8 +46,7 @@ void signRawTx(uint8_t* rawTx, uint8_t* privateKey){
 	// TODO: Sign Tx
 }
 
-uint8_t* blockTemplate(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp){
-	uint8_t* block         = malloc(180+24*txCount);
+void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp, uint8_t* out){
 	uint8_t  root[64]      = {0};
 	uint8_t  signature[96] = {0};
 	uint8_t  tx_blocks     = txCount>>6;
@@ -59,15 +58,32 @@ uint8_t* blockTemplate(uint8_t* minerUserName, uint8_t* transactions, uint8_t* s
 	blakesl(signature, 96, prevBlockHash, 64, root);
 	crc512(transactions, 24*(tx_blocks<<6), root);
 	if( (tx_blocks<<9) != txCount ) blakesl(&transactions[24*(tx_blocks<<6)], 24*(txCount&0x3F), root, 64, root);
-	for(uint8_t i=0; i<64; i++) block[i    ] = root[i];
-	for(uint8_t i=0; i<96; i++) block[i+ 64] = signature[i];
-	for(uint8_t i=0; i< 4; i++) block[i+160] = txCount_8[i];
-	for(uint8_t i=0; i< 4; i++) block[i+164] = timestamp_8[i];
-	for(uint8_t i=0; i<12; i++) block[i+168] = coinbase[i];
+	for(uint8_t i=0; i<64; i++) out[i    ] = root[i];
+	for(uint8_t i=0; i<96; i++) out[i+ 64] = signature[i];
+	for(uint8_t i=0; i< 4; i++) out[i+160] = txCount_8[i];
+	for(uint8_t i=0; i< 4; i++) out[i+164] = timestamp_8[i];
+	for(uint8_t i=0; i<12; i++) out[i+168] = coinbase[i];
+	// Eight Nonce Bytes
+}
+
+uint8_t* blockTemplate(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp){
+	uint8_t* block         = malloc(188+24*txCount);
+	blockHeader(minerUserName, transactions, signatures, prevBlockHash, txCount, difficulty, fee, timestamp);
+	for(uint8_t i=0; i<txCount; i++)
+		for(uint8_t j=0;j<24;j++)
+			block[24*i+j+188] = transactions[128*j+i];
+			// Position in block (Every tx has 24 bytes, without signature)
+							// Position in Tx array (every tx has 128 bytes)
+	return block;
+}
+
+uint8_t* blockTemplateFromHeader(uint8_t* header, uint8_t* transactions){
+	uint8_t* block         = malloc(188+24*txCount);
+	for(uint8_t i=0;i<188;i++) block[i] = header[i];
 	// Four Nonce Bytes
 	for(uint8_t i=0; i<txCount; i++)
 		for(uint8_t j=0;j<24;j++)
-			block[24*i+j+180] = transactions[128*j+i];
+			block[24*i+j+188] = transactions[128*j+i];
 			// Position in block (Every tx has 24 bytes, without signature)
 							// Position in Tx array (every tx has 128 bytes)
 	return block;
