@@ -1,8 +1,12 @@
 #include <stdint.h>
 #include <math.h>
 #include <stdlib.h>
-#include "../crypto/crc.h"
-#include "../crypto/blake2.h"
+#include "crypto/crc.h"
+#include "crypto/blake2.h"
+
+#define GET_REWARD_FUNCTION
+
+#include "config.h"
 
 // The following code assumes that little endian is globally used.
 // All BLS code is in "TODO" state, since none of the libraries appear
@@ -49,10 +53,10 @@ uint8_t* blockTemplate(uint8_t* minerUserName, uint8_t* transactions, uint8_t* s
 	uint8_t  tx_blocks     = txCount>>6;
 	uint8_t* txCount_8     = (uint8_t*)&txCount;
 	uint8_t* timestamp_8   = (uint8_t*)&timestamp;
-	uint32_t reward        = (uint32_t)(pow(log2(difficulty), 2.0)*0x40000000) + txCount*fee;
+	uint32_t reward        = (uint32_t)(REWARD_FUNCTION(difficulty)*BASE_REWARD) + txCount*fee;
 	uint8_t* coinbase      = buildCoinbaseTx(minerUserName, reward, timestamp);
 	// TODO: Aggregate signatures using BLS lib
-	blakesl(signature, 33, prevBlockHash, 64, root);
+	blakesl(signature, 96, prevBlockHash, 64, root);
 	crc512(transactions, 24*(tx_blocks<<6), root);
 	if( (tx_blocks<<9) != txCount ) blakesl(&transactions[24*(tx_blocks<<6)], 24*(txCount&0x3F), root, 64, root);
 	for(uint8_t i=0; i<64; i++) block[i    ] = root[i];
