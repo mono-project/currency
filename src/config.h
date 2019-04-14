@@ -1,6 +1,7 @@
 #ifndef CONF
 #define CONF
 
+#define CURRENCY_NAME "mono"   // Lowercase, written in quotation marks
 #define BASE_REWARD 0x40000000 // Maximum block reward, multiplied with REWARD_FUNCTION(difficulty)
 
 #ifdef GET_REWARD_FUNCTION
