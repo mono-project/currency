@@ -311,21 +311,19 @@ def ideal(msg, window):
 	k = int((N+1)/2*T)
 	sumTarget = 0
 	t = 0
-	j = 0
 
 # Loop through N most recent blocks.  "< height", not "<=". 
 # height-1 = most recently solved rblock
-	for i in range(-N, 0, 1):
-		solvetime = states[i].timestamp - states[i-1].timestamp
-		j += 1
-		t += solvetime * j
-		sumTarget += bits_to_target(states[i].bits)
+	for i in range(N):
+		solvetime = states[-(N-i)].timestamp - states[-(N-i+1)].timestamp
+		t += solvetime *(i+1)/N
+		sumTarget += bits_to_target(states[-(N-i)].bits)/N
 
 # Keep t reasonable in case strange solvetimes occurred. 
-	if t < N * k // 3:
-		t = N * k // 3
+	if t < k // 3:
+		t = k // 3
 
-	next_target = t * sumTarget // k // N // N
+	next_target = int(t * sumTarget // k)
 	return target_to_bits(next_target)
 
 def next_bits_ema_int_approx(msg, window):
