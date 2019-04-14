@@ -117,6 +117,27 @@ uint32_t* getPeerList(){
 	return(ips);
 }
 
+uint32_t* getUsernames(){
+	char* folder = getFolder();
+	char* fileName = (char*)malloc(256);
+	uint64_t* user = (uint64_t*)malloc(8); //255.255.255.255:65536 - B.B.B.B:BB -> 6 Byte
+	snprintf(fileName, 256, folder, "userDB");
+	FILE* userDB = fopen(fileName, "r");
+	free(fileName);
+
+	uint32_t userCount = 0;
+	while(fgets(user, 8, userDB)) userCount++;
+	fseek(userDB, 0, SEEK_SET)
+	uint64_t* users = (uint64_t*)malloc(userCount*8);
+	for(uint32_t i=0;i<userCount;i++){
+		fgets(user, 8, userDB)
+		for(uint8_t j=0;j<8;j++){
+			users[i] += user[j] << (8*j);
+		}
+	}
+	return(users);
+}
+
 uint32_t* getPubKeys(){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
