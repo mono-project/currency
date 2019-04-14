@@ -19,7 +19,7 @@ FILE* accountDB = fopen(buf, "r");
 free(buf);
 */
 uint64_t getDifficulty(uint32_t height){
-	char* fileName = malloc(256,1);
+	char* fileName = (char*)malloc(256);
 	snprintf(fileName, 256, folder, "diffDB");
 	FILE* diffDB = fopen(fileName, "r");
 	snprintf(fileName, 256, folder, "headerDB");
@@ -52,7 +52,8 @@ uint64_t getDifficulty(uint32_t height){
 }
 
 uint8_t* getTx(uint64_t txNumber){
-	char* tx = malloc(20,1);
+	char* fileName = (char*)malloc(256);
+	char* tx = (char*)malloc(20);
 	snprintf(fileName, 256, folder, "txDB");
 	FILE* txDB = fopen(fileName, "r");
 	free(fileName);
@@ -63,6 +64,31 @@ uint8_t* getTx(uint64_t txNumber){
 	fseek(txDB, txNumber*20, SEEK_SET);	
 	fgets(tx, 20, txDB)
 	return(tx);
+}
+
+uint8_t* getBlockTx(uint32_t height){
+	char* fileName = (char*)malloc(256);
+	snprintf(fileName, 256, folder, "txDB");
+	FILE* txDB = fopen(fileName, "r");
+	snprintf(fileName, 256, folder, "txNumDB");
+	FILE* txNumDB = fopen(fileName, "r");
+	free(fileName);
+
+	uint64_t txCnt = 0;
+	uint64_t realHeight[2] = 0;
+	char* txNumber = (char*)malloc(8);
+	while(fgets(txNumber, 8, txNumDB)) realHeight++;
+	if(realHeight < height) return 0;
+	fseek(txNumDB, (height-1)*8, SEEK_SET);
+	fgets(txNumber, 8, txNumDB);
+	for(uint8_t i=0;i<8;i++) realHeight[0] += txNumber[i] << (8*i);
+	fseek(txNumDB, (height-1)*8, SEEK_SET);
+	fgets(txNumber, 8, txNumDB);
+	for(uint8_t i=0;i<8;i++) realHeight[1] += txNumber[i] << (8*i);
+	uint64_t txCount = realHeight[1]-realHeight[0];
+	char* txs = (char*)malloc(20*(txCount));
+	for(uint64_t i=0;i<=txCount;i++) fgets(txs+20*i, 20, txDB);
+	return(txs);
 }
 
 
