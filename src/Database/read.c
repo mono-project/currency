@@ -3,17 +3,6 @@
 #include "../config.h"
 #include "difficulty.h"
 
-// Open globally needed files
-/*
-snprintf(buf, 256, folder, "txDB");
-FILE* txDB = fopen(buf, "r");
-snprintf(buf, 256, folder, "headerDB");
-FILE* headerDB = fopen(buf, "r");
-snprintf(buf, 256, folder, "accountDB");
-FILE* accountDB = fopen(buf, "r");
-free(buf);
-*/
-
 char* getFolder(){
 	char* folder = calloc(256,1);
 	snprintf(folder, 256, "~/.%s/", CURRENCY_NAME);
