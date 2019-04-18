@@ -1,10 +1,14 @@
 #include "../currency.h"
 #include "../Crypto/squash.h" 
 #include "../Database/difficulty.h" 
+#include "../Database/read.h" 
+//#include "../Database/read.h" TODO: Write results after finishing calc
 //#include "../crypto/bls.h" TODO: BLS Lib
 
-void validateBlockSignature(uint8_t* transactions, uint8_t* signature){
-	//TODO
+uint8_t validateBlockSignature(uint8_t* block){
+	uint8_t* signature = &block[64];
+	uint8_t* transactions = &block[180];
+	//TODO if(missmatch) return 0
 }
 
 uint8_t* hashBlock(uint8_t* block, uint32_t height){
@@ -29,3 +33,10 @@ uint8_t validateBlockHash(uint8_t* block, uint32_t height, uint64_t difficulty){
 	return(validateHash(hash, difficulty));
 } 
 
+uint8_t validateBlock(uint8_t* block, uint32_t height){
+	uint32_t timestamp = 0;
+	for(uint8_t i=0; i<4; i++) timestamp += block[i+164]<<(8*i);
+	uint64_t difficulty = getDifficultyForTimestamp(timestamp, height);
+	if(!validateBlockHash(block, height, difficulty)) return 0;
+	if(!validateBlockSignature(block)) return 0;	
+}
