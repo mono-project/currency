@@ -17,6 +17,7 @@ uint64_t calcDifficultyForHeight(uint32_t height){
 	snprintf(fileName, 256, folder, "headerDB");
 	FILE* headerDB = fopen(fileName, "r");
 	free(fileName);
+	free(folder);
 
 	uint32_t headerCnt = 0;
 	uint32_t diffCnt = 0;
@@ -52,6 +53,7 @@ uint64_t getDifficultyForTimestamp(uint32_t prevTimestamp, uint32_t height){
 	snprintf(fileName, 256, folder, "headerDB");
 	FILE* headerDB = fopen(fileName, "r");
 	free(fileName);
+	free(folder);
 
 	uint32_t headerCnt = 0;
 	uint32_t diffCnt = 0;
@@ -86,6 +88,7 @@ uint8_t* getTx(uint64_t txNumber){
 	snprintf(fileName, 256, folder, "txDB");
 	FILE* txDB = fopen(fileName, "r");
 	free(fileName);
+	free(folder);
 
 	uint64_t txCnt = 0;
 	while(fgets(tx, 20, txDB)) txCnt++;
@@ -103,6 +106,7 @@ uint8_t* getBlockTx(uint32_t height){
 	snprintf(fileName, 256, folder, "txNumDB");
 	FILE* txNumDB = fopen(fileName, "r");
 	free(fileName);
+	free(folder);
 
 	uint64_t txCnt = 0;
 	uint64_t realHeight[2] = 0;
@@ -128,6 +132,7 @@ uint32_t* getPeerList(){
 	snprintf(fileName, 256, folder, "peerList");
 	FILE* peerList = fopen(fileName, "r");
 	free(fileName);
+	free(folder);
 
 	uint32_t peerCount = 0;
 	while(fgets(ip, 8, peerList)) peerCount++;
@@ -145,10 +150,11 @@ uint32_t* getPeerList(){
 uint32_t* getUsernames(){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
-	uint64_t* user = (uint64_t*)malloc(8); //255.255.255.255:65536 - B.B.B.B:BB -> 6 Byte
+	uint64_t* user = (uint64_t*)malloc(8);
 	snprintf(fileName, 256, folder, "userDB");
 	FILE* userDB = fopen(fileName, "r");
 	free(fileName);
+	free(folder);
 
 	uint32_t userCount = 0;
 	while(fgets(user, 8, userDB)) userCount++;
@@ -166,10 +172,11 @@ uint32_t* getUsernames(){
 uint32_t* getPubKeys(){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
-	uint64_t* pubKey = (uint64_t*)malloc(48); //255.255.255.255:65536 - B.B.B.B:BB -> 6 Byte
+	uint64_t* pubKey = (uint64_t*)malloc(48);
 	snprintf(fileName, 256, folder, "pubKeyDB");
 	FILE* pubKeyDB = fopen(fileName, "r");
 	free(fileName);
+	free(folder);
 
 	uint32_t keyCount = 0;
 	while(fgets(pubKey, 48, pubKeyDB)) keyCount++;
