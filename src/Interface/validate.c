@@ -1,5 +1,6 @@
 #include "../currency.h"
-#include "../crypto/squash.h" 
+#include "../Crypto/squash.h" 
+#include "../Database/difficulty.h" 
 //#include "../crypto/bls.h" TODO: BLS Lib
 
 void validateBlockSignature(uint8_t* transactions, uint8_t* signature){
@@ -20,19 +21,11 @@ uint8_t* hashBlock(uint8_t* block, uint32_t height){
 }
 
 uint8_t validateHash(uint8_t* hash, uint64_t difficulty){
-	uint64_t* hash_64 = (uint64_t*)hash;
-	uint64_t  temp    = 0;
-	
-	for(uint8_t i=0;i<4;i++){
-		temp = hash_64[0] * difficulty;
-		if(temp/difficulty != hash_64[0]) return(0);
-	} 
-	return(1);
-
+	return(checkDiff(difficulty, hash));
 }
 
 uint8_t validateBlockHash(uint8_t* block, uint32_t height, uint64_t difficulty){
-	uint8_t*  hash    = hashBlock(block, height);
+	uint8_t*  hash = hashBlock(block, height);
 	return(validateHash(hash, difficulty));
 } 
 
