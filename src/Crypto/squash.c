@@ -1,9 +1,12 @@
+// Copyright (c) 2019, The CCLib Developers
+//
+// Please see the included LICENSE file for more information.
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include "blake2.h"
-
 
 #define HASH_BYTES      32                 // hash length in bytes
 #define CACHE_ROUNDS    4                  // number of rounds in cache production
