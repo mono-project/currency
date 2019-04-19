@@ -19,8 +19,8 @@ uint8_t* buildTx(uint8_t* in, uint8_t* out, uint64_t amount, uint8_t mode){
 	uint8_t* fee_8    = (uint8_t*)&fee;
 	if(mode == 255){
 		*tx = mode;
-		for(uint8_t i=0;i<96;i++) tx[i+ 1] = in[i];
-		for(uint8_t i=0;i< 8;i++) tx[i+97] = out[i];
+		for(uint8_t i=0;i<48;i++) tx[i+ 1] = in[i];
+		for(uint8_t i=0;i< 8;i++) tx[i+49] = out[i];
 	}
 	else{
 		for(uint8_t i=7;i>=0;i--) *tx += (amount_8[i] == 0);
