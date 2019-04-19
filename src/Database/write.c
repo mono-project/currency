@@ -34,4 +34,21 @@ uint8_t setFundsForUsername(uint8_t* username, uint64_t funds){
 	return 0;
 }
 
+uint8_t changeFundsForUsername(uint8_t* username, uint64_t change, uint8_t mode){
+	// Mode 0 = Add (+)
+	// Mode 1 = Sub (-)
 
+	uint64_t prevFunds = getFundsForUsername(username);
+	uint8_t out = 0;
+	if(!mode){
+		out = setFundsForUsername(username, prevFunds+change);
+	} else {
+		if(prevFunds-change > prevFunds){
+			printf("[Error] more funds spent than available\n");
+			return 0;
+		}
+		out = setFundsForUsername(username, prevFunds-change);
+	}
+	if(!out) printf("[Error] Unable to change funds, username not found\n");
+	return out;
+}
