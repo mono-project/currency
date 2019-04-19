@@ -72,6 +72,7 @@ uint8_t validateInternalHash(uint8_t* block){
 	crc512(&block[188], 24*(tx_blocks<<6), hash);
 	if( (tx_blocks<<9) != txCount ) blakesl(&block[188+24*(tx_blocks<<6)], 24*(txCount&0x3F), hash, 64, hash);
 	for(uint8_t i=0;i<64;i++) if(block[i] != hash[i]) return 0;
+	free(hash);
 	return 1;
 }
 

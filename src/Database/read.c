@@ -190,6 +190,7 @@ uint64_t getFundsForUsername(uint8_t* username){
 	char* fileName = (char*)malloc(256);
 	uint64_t* user = (uint64_t*)malloc(8);
 	uint64_t* funds = (uint64_t*)malloc(8);
+	uint64_t  out = 0;
 	snprintf(fileName, 256, folder, "userDB");
 	FILE* userDB = fopen(fileName, "r");
 	snprintf(fileName, 256, folder, "wealthDB");
@@ -208,7 +209,9 @@ uint64_t getFundsForUsername(uint8_t* username){
 		|| user[7] != username[7]) continue;
 		fclose(userDB);
 		fclose(wealthDB);
-		return(*funds);
+		out = *funds;
+		free(funds);
+		return(out);
 	}
 	free(user);
 	free(funds);
@@ -241,7 +244,7 @@ uint64_t* getPubKeys(){
 	return(pubKeys);
 }
 
-uint8_t* getPrevBlockHash(){
+uint8_t* getLastBlockHash(){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
 	char* header = (char*)malloc(188);

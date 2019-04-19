@@ -28,10 +28,14 @@ uint8_t setFundsForUsername(uint8_t* username, uint64_t funds){
 			continue;
 		}
 		fprintf(wealthDB, funds_8, 8);
+		free(user);
+		free(funds);
 		fclose(userDB);
 		fclose(wealthDB);
 		return 1;
 	}
+	free(user);
+	free(funds);
 	fclose(userDB);
 	fclose(wealthDB);
 	return 0;
