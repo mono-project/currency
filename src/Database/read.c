@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "../config.h"
+#include "../Crypto/blake2.h"
 #include "difficulty.h"
 
 char* getFolder(){
@@ -129,6 +130,7 @@ uint8_t* getBlockTx(uint32_t height){
 	uint64_t txCount = realHeight[1]-realHeight[0];
 	char* txs = (char*)malloc(20*(txCount));
 	for(uint64_t i=0;i<=txCount;i++) fgets(txs+20*i, 20, txDB);
+	free(txNumber);
 	fclose(txDB);
 	fclose(txNumDB);
 	return(txs);
@@ -153,6 +155,7 @@ uint32_t* getPeerList(){
 			ips[i] += ip[j] << (8*j);
 		}
 	}
+	free(ip);
 	fclose(peerList);
 	return(ips);
 }
@@ -176,6 +179,7 @@ uint32_t* getUsernames(){
 			users[i] += user[j] << (8*j);
 		}
 	}
+	free(user);
 	fclose(userDB);
 	return(users);
 }
@@ -206,12 +210,14 @@ uint64_t getFundsForUsername(uint8_t* username){
 		fclose(wealthDB);
 		return(*funds);
 	}
+	free(user);
+	free(funds);
 	fclose(userDB);
 	fclose(wealthDB);
 	return 0;
 }
 
-uint32_t* getPubKeys(){
+uint64_t* getPubKeys(){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
 	uint64_t* pubKey = (uint64_t*)malloc(48);
@@ -230,7 +236,7 @@ uint32_t* getPubKeys(){
 			pubKeys[i] += pubKey[j] << (8*j);
 		}
 	}
+	free(pubKey);
 	fclose(pubKeyDB);
 	return(pubKeys);
 }
-
