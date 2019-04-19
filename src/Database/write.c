@@ -29,8 +29,12 @@ uint8_t setFundsForUsername(uint8_t* username, uint64_t funds){
 			continue;
 		}
 		fprintf(wealthDB, funds_8, 8);
+		fclose(userDB);
+		fclose(wealthDB);
 		return 1;
 	}
+	fclose(userDB);
+	fclose(wealthDB);
 	return 0;
 }
 
@@ -51,4 +55,9 @@ uint8_t changeFundsForUsername(uint8_t* username, uint64_t change, uint8_t mode)
 	}
 	if(!out) printf("[Error] Unable to change funds, username not found\n");
 	return out;
+}
+
+uint8_t addUsername(uint8_t* username){
+	
+	
 }

@@ -41,6 +41,8 @@ uint64_t calcDifficultyForHeight(uint32_t height){
 			difficulties[j] += diffBuf[i+j<<2] << (8*i);
 		}
 	}
+	fclose(diffDB);
+	fclose(headerDB);
 	return(diff(difficulties, timestamps, -1));
 }
 
@@ -78,6 +80,8 @@ uint64_t getDifficultyForTimestamp(uint32_t prevTimestamp, uint32_t height){
 		}
 	}
 	timestamps[255] = prevTimestamp;
+	fclose(diffDB);
+	fclose(headerDB);
 	return(diff(difficulties, timestamps, -1));
 }
 
@@ -95,10 +99,13 @@ uint8_t* getTx(uint64_t txNumber){
 	if(txCnt < txNumber) return 0;
 	fseek(txDB, txNumber*20, SEEK_SET);	
 	fgets(tx, 20, txDB)
+	fclose(txDB);
 	return(tx);
 }
 
 uint8_t* getBlockTx(uint32_t height){
+	// TODO: Change to new transaction model
+	// MySQL or one file per block?
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
 	snprintf(fileName, 256, folder, "txDB");
@@ -122,6 +129,8 @@ uint8_t* getBlockTx(uint32_t height){
 	uint64_t txCount = realHeight[1]-realHeight[0];
 	char* txs = (char*)malloc(20*(txCount));
 	for(uint64_t i=0;i<=txCount;i++) fgets(txs+20*i, 20, txDB);
+	fclose(txDB);
+	fclose(txNumDB);
 	return(txs);
 }
 
@@ -136,7 +145,7 @@ uint32_t* getPeerList(){
 
 	uint32_t peerCount = 0;
 	while(fgets(ip, 8, peerList)) peerCount++;
-	fseek(txNumDB, 0, SEEK_SET)
+	fseek(peerList, 0, SEEK_SET)
 	uint64_t* ips = (uint64_t*)malloc(peerCount*8);
 	for(uint32_t i=0;i<peerCount;i++){
 		fgets(ip, 8, peerList)
@@ -144,6 +153,7 @@ uint32_t* getPeerList(){
 			ips[i] += ip[j] << (8*j);
 		}
 	}
+	fclose(peerList);
 	return(ips);
 }
 
@@ -166,6 +176,7 @@ uint32_t* getUsernames(){
 			users[i] += user[j] << (8*j);
 		}
 	}
+	fclose(userDB);
 	return(users);
 }
 
@@ -191,8 +202,12 @@ uint64_t getFundsForUsername(uint8_t* username){
 		|| user[5] != username[5]
 		|| user[6] != username[6]
 		|| user[7] != username[7]) continue;
+		fclose(userDB);
+		fclose(wealthDB);
 		return(*funds);
 	}
+	fclose(userDB);
+	fclose(wealthDB);
 	return 0;
 }
 
@@ -215,6 +230,7 @@ uint32_t* getPubKeys(){
 			pubKeys[i] += pubKey[j] << (8*j);
 		}
 	}
+	fclose(pubKeyDB);
 	return(pubKeys);
 }
 
