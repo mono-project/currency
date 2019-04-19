@@ -57,6 +57,7 @@ void signRawTx(uint8_t* rawTx, uint8_t* privateKey){
 void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp, uint8_t* out){
 	uint8_t  root[64]      = {0};
 	uint8_t  signature[96] = {0};
+	//TODO: Enable adaptive Tx size
 	uint8_t  tx_blocks     = txCount>>6;
 	uint8_t* txCount_8     = (uint8_t*)&txCount;
 	uint8_t* timestamp_8   = (uint8_t*)&timestamp;

@@ -7,7 +7,7 @@
 
 uint8_t validateBlockSignature(uint8_t* block){
 	uint8_t* signature = &block[64];
-	uint8_t* transactions = &block[180];
+	uint8_t* transactions = &block[188];
 	//TODO if(missmatch) return 0
 }
 
@@ -29,7 +29,7 @@ uint8_t processTransaction(uint8_t* transaction){
 
 uint8_t validateTransactions(uint8_t* block, uint32_t txCount){
 	if(!validateBlockSignature(block)) return 0;
-	uint64_t pos = 180;
+	uint64_t pos = 188;
 	for(uint32_t i=0;i<txCount;i++){
 		uint8_t status = processTransaction(&block[pos]);
 		if(!(status>>7)) return 0;
@@ -43,11 +43,11 @@ uint8_t* hashBlock(uint8_t* block, uint32_t height){
 	uint64_t* hash_64 = (uint64_t*)malloc(64);
 	uint8_t*  hash    = (uint8_t*)hash_64;
 	if(!height){
-		blakeln(block, 180, hash);
+		blakeln(block, 188, hash);
 	} else {
 		uint32_t txCount = 0;
 		for(uint8_t i=0; i<32;i+=4) txCount += block[i+160]<<(8*i);
-		squash_light_api(block, 180+txCount*24, hash, height);
+		squash_light_api(block, 188+txCount*24, hash, height);
 	}
 	return hash;
 }
@@ -67,4 +67,5 @@ uint8_t validateBlock(uint8_t* block, uint32_t height){
 	uint64_t difficulty = getDifficultyForTimestamp(timestamp, height);
 	if(!validateBlockHash(block, height, difficulty)) return 0;
 	if(!validateTransactions(block)) return 0;
+	return 1;
 }
