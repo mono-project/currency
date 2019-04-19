@@ -2,7 +2,7 @@
 #include "../Crypto/squash.h" 
 #include "../Database/difficulty.h" 
 #include "../Database/read.h" 
-//#include "../Database/read.h" TODO: Write results after finishing calc
+#include "../Database/write.h"
 //#include "../crypto/bls.h" TODO: BLS Lib
 
 uint8_t validateBlockSignature(uint8_t* block){
