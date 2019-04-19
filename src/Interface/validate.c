@@ -17,13 +17,12 @@ uint8_t processTransaction(uint8_t* transaction){
 		if(!prevFunds) return 0 + *transaction;
 		uint64_t amount = 0;
 		for(uint8_t i=0;i<8;i++) amount += transaction[17+i]<<(8*i);
-		if(!changeFundsForUsername(&transaction[1], amount, 0)) return 0;
-		if(!changeFundsForUsername(&transaction[9], amount, 1)) return 0;
-		return 128 + *transaction
-		// Remove funds from X and adding it to Y
+		if(!changeFundsForUsername(&transaction[1], amount, 0)) return 0; // - from sender
+		if(!changeFundsForUsername(&transaction[9], amount, 1)) return 0; // + for receiver
+		return 128 + *transaction;
 	} else {
-		; // Add user to database
-		return 232; // 128 + 104
+		addUsername(&transaction[49], &transaction[1]);
+		return 185; // 128 + 57
 	}
 	
 }
