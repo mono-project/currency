@@ -57,7 +57,27 @@ uint8_t changeFundsForUsername(uint8_t* username, uint64_t change, uint8_t mode)
 	return out;
 }
 
-uint8_t addUsername(uint8_t* username){
-	
-	
+uint8_t addUsername(uint8_t* username, uint8_t* pubKey){
+	char*     folder   = getFolder();
+	char*     fileName = (char*)malloc(256);
+	snprintf(fileName, 256, folder, "userDB");
+	FILE* userDB = fopen(fileName, "w+");
+	snprintf(fileName, 256, folder, "wealthDB");
+	FILE* wealthDB = fopen(fileName, "w");
+	snprintf(fileName, 256, folder, "pubKeyDB");
+	FILE* pubKeyDB = fopen(fileName, "w");
+	if(!userDB || !wealthDB || !pubKeyDB) return 0;
+	free(fileName);
+	free(folder);
+	while(fgets(user, 8, userDB)){
+		fseek(wealthDB,8,SEEK_CUR);
+		fseek(pubKeyDB,8,SEEK_CUR);
+	}
+	fprintf(userDB, username, 8);
+	fprintf(wealthDB, "00000000", 8);
+	fprintf(pubKeyDB, pubKey, 48);
+	fclose(userDB);
+	fclose(wealthDB);
+	fclose(pubKeyDB);
+	return 1;
 }
