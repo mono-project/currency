@@ -15,6 +15,10 @@ uint8_t processTransaction(uint8_t* transaction){
 	if(*transaction != 255){
 		uint64_t prevFunds = getFundsForUsername(&transaction[1]);
 		if(!prevFunds) return 0 + *transaction;
+		uint64_t amount = 0;
+		for(uint8_t i=0;i<8;i++) amount += transaction[17+i]<<(8*i);
+		if(!changeFundsForUsername(&transaction[1], amount, 0)) return 0;
+		if(!changeFundsForUsername(&transaction[9], amount, 1)) return 0;
 		return 128 + *transaction
 		// Remove funds from X and adding it to Y
 	} else {

@@ -35,12 +35,12 @@ uint8_t setFundsForUsername(uint8_t* username, uint64_t funds){
 }
 
 uint8_t changeFundsForUsername(uint8_t* username, uint64_t change, uint8_t mode){
-	// Mode 0 = Add (+)
-	// Mode 1 = Sub (-)
+	// Mode 1 = Add (+)
+	// Mode 0 = Sub (-)
 
 	uint64_t prevFunds = getFundsForUsername(username);
 	uint8_t out = 0;
-	if(!mode){
+	if(mode){
 		out = setFundsForUsername(username, prevFunds+change);
 	} else {
 		if(prevFunds-change > prevFunds){
