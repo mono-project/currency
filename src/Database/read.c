@@ -240,3 +240,24 @@ uint64_t* getPubKeys(){
 	fclose(pubKeyDB);
 	return(pubKeys);
 }
+
+uint8_t* getPrevBlockHash(){
+	char* folder = getFolder();
+	char* fileName = (char*)malloc(256);
+	char* header = (char*)malloc(188);
+	char* hash   = (char*)malloc(64);
+	uint64_t cnt = 0;
+	snprintf(fileName, 256, folder, "headerDB");
+	FILE* headerDB = fopen(fileName, "r");
+	free(fileName);
+	free(folder);
+	while(fgets(header, 188, headerDB)) cnt++;
+	if(!cnt) return 0;
+	fseek(headerDB, (cnt-1)*188, SEEK_SET);
+	fgets(header, 188, headerDB);
+	blakenl(header, 188, hash);
+	free(header);
+	fclose(headerDB);
+	return(hash);
+}
+
