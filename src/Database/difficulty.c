@@ -16,8 +16,8 @@ uint64_t diff(uint64_t* difficulties, uint32_t* timestamps, uint8_t inDiffCount)
 	uint64_t sumTarget = 0;
 	uint64_t t = 0;
 	for(uint8_t i=0; i<N;i++){
-		t += (states[inDiffCount-(N-i)].timestamp - states[inDiffCount-(N-i+1)].timestamp)*(i+1)/N;
-		sumTarget += bits_to_target(states[inDiffCount-(N-i)].bits)/N;
+		t += (timestamps[inDiffCount-(N-i)] - timestamps[inDiffCount-(N-i+1)])*(i+1)/N;
+		sumTarget += difficulties[inDiffCount-(N-i)]/N;
 	}
 	if (t < k / 3) t = k / 3;
 	return (t * sumTarget / k);

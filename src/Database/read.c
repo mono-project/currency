@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <math.h>
+#include <stdint.h>
 #include "../config.h"
 #include "difficulty.h"
 

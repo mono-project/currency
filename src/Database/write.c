@@ -1,7 +1,6 @@
 #include <stdio.h>
-#include <math.h>
-#include "../config.h"
-#indlude "read.h"
+#include <stdint.h>
+#include "read.h"
 
 uint8_t setFundsForUsername(uint8_t* username, uint64_t funds){
 	uint8_t   good     = 1;
