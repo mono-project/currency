@@ -130,7 +130,7 @@ uint8_t* getBlockTx(uint32_t height){
 	uint8_t currentSize = 0;
 	while(i<=txMem){
 		fgets(txs+i, 1, txDB);
-		currentSize = txs[i]&0x8f;
+		currentSize = txs[i]&0x7f;
 		txs = (char*)realloc(txs, i+currentSize);
 		fgets(txs+i, currentSize, txDB);
 		i += currentSize;
