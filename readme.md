@@ -1,15 +1,16 @@
 #### ToDo
 - [ ] **Core**
 - [ ] Add possibility to perform reorg (sync after chainsplit)
+- [ ] Verify first and then add to Database
 - [ ] **BLS**
 - [ ] Fix BLS Lib
 - [ ] Add Networking Code
 - [ ] Add transaction signatures
 - [ ] Add signature aggregation
 - [ ] Add signature verification
-- [ ] **Transactions**
-- [ ] Add variable transaction size read (DB)
-- [ ] Add variable transaction size allocation (Block creation)
+- [x] **Transactions**
+- [x] Add variable transaction size read (DB)
+- [x] Add variable transaction size allocation (Block creation)
 - [ ] **Network**
 - [ ] Broadcast block when found
 - [ ] Add block when received
