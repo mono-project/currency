@@ -54,13 +54,16 @@ void signRawTx(uint8_t* rawTx, uint8_t* privateKey){
 	// TODO: Sign Tx
 }
 
-void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint64_t txMemory, uint64_t difficulty, uint32_t fee, uint32_t timestamp, uint8_t* out){
+void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint64_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp, uint8_t* out){
+	uint64_t txMemory = transactions[0]&0x7f;
+	for(uint32_t i=1; i<txCount;i++)
+		txMemory += transactions[txMemory]&0x7F;
 	uint8_t  root[64]      = {0};
 	uint8_t  signature[96] = {0};
 	uint8_t  tx_blocks     = txMemory>>9;
-	uint8_t* txCount_8     = (uint8_t*)&txCount;
+	uint8_t* txMemory_8    = (uint8_t*)&txMemory;
 	uint8_t* timestamp_8   = (uint8_t*)&timestamp;
-	uint32_t reward        = (uint32_t)(REWARD_FUNCTION(difficulty)*BASE_REWARD) + txCount*fee;
+	uint32_t reward        = (uint32_t)(REWARD_FUNCTION(difficulty)*BASE_REWARD) + txMemory*fee;
 	uint8_t* coinbase      = buildCoinbaseTx(minerUserName, reward, timestamp);
 	// TODO: Aggregate signatures using BLS lib
 	blakesl(signature, 96, prevBlockHash, 64, root);
@@ -75,24 +78,37 @@ void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatu
 }
 
 uint8_t* blockTemplate(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp){
-	uint8_t* block         = malloc(188+24*txCount);
+	uint8_t* block = (uint8_t*)malloc(188);
 	blockHeader(minerUserName, transactions, signatures, prevBlockHash, txCount, difficulty, fee, timestamp);
-	for(uint8_t i=0; i<txCount; i++)
-		for(uint8_t j=0;j<24;j++)
-			block[24*i+j+188] = transactions[128*j+i];
-			// Position in block (Every tx has 24 bytes, without signature)
-							// Position in Tx array (every tx has 128 bytes)
+	uint64_t pos = 188;
+	uint8_t size = 0;
+	for(uint32_t i=0; i<txCount;i++){
+		size = transactions[121*i]&0x7F;
+		block = (uint8_t*)realloc(pos+size);
+		for(uint8_t j=0;j<size;j++)
+			block[pos+1] = transactions[121*i+j];
+		pos += size;
+	}
+	// Position in block (Every tx has ~24 bytes, without signature)
+	// Position in Tx array (every tx has 121 bytes)
 	return block;
 }
 
 uint8_t* blockTemplateFromHeader(uint8_t* header, uint8_t* transactions){
-	uint8_t* block         = malloc(188+24*txCount);
+	uint8_t* block = (uint8_t*)malloc(188);
 	for(uint8_t i=0;i<188;i++) block[i] = header[i];
-	// Four Nonce Bytes
-	for(uint8_t i=0; i<txCount; i++)
-		for(uint8_t j=0;j<24;j++)
-			block[24*i+j+188] = transactions[128*j+i];
-			// Position in block (Every tx has 24 bytes, without signature)
-							// Position in Tx array (every tx has 128 bytes)
+	uint32_t txCount = 0;
+	for(uint8_t i=0;i<4;i++) txCount += 
+	uint64_t pos = 188;
+	uint8_t size = 0;
+	for(uint32_t i=0; i<txCount;i++){
+		size = transactions[121*i]&0x7F;
+		block = (uint8_t*)realloc(pos+size);
+		for(uint8_t j=0;j<size;j++)
+			block[pos+1] = transactions[121*i+j];
+		pos += size;
+	}
+	// Position in block (Every tx has ~24 bytes, without signature)
+	// Position in Tx array (every tx has 128 bytes)
 	return block;
 }
