@@ -1,6 +1,7 @@
 #### ToDo
 - [ ] **Core**
 - [ ] Add possibility to perform reorg (sync after chainsplit)
+- [ ] Verify first and then add to Database
 - [ ] **BLS**
 - [ ] Fix BLS Lib
 - [ ] Add Networking Code
