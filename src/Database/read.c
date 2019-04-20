@@ -105,34 +105,39 @@ uint8_t* getTx(uint64_t txNumber){
 }
 
 uint8_t* getBlockTx(uint32_t height){
-	// TODO: Change to new transaction model
-	// MySQL or one file per block?
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
 	snprintf(fileName, 256, folder, "txDB");
 	FILE* txDB = fopen(fileName, "r");
-	snprintf(fileName, 256, folder, "txNumDB");
-	FILE* txNumDB = fopen(fileName, "r");
+	snprintf(fileName, 256, folder, "txSpaceDB");
+	FILE* txSpaceDB = fopen(fileName, "r");
 	free(fileName);
 	free(folder);
-
 	uint64_t txCnt = 0;
 	uint64_t realHeight[2] = 0;
-	char* txNumber = (char*)malloc(8);
-	while(fgets(txNumber, 8, txNumDB)) realHeight++;
+	char* txSpace = (char*)malloc(8);
+	while(fgets(txSpace, 8, txSpaceDB)) realHeight++;
 	if(realHeight < height) return 0;
-	fseek(txNumDB, (height-1)*8, SEEK_SET);
-	fgets(txNumber, 8, txNumDB);
-	for(uint8_t i=0;i<8;i++) realHeight[0] += txNumber[i] << (8*i);
-	fseek(txNumDB, (height-1)*8, SEEK_SET);
-	fgets(txNumber, 8, txNumDB);
-	for(uint8_t i=0;i<8;i++) realHeight[1] += txNumber[i] << (8*i);
-	uint64_t txCount = realHeight[1]-realHeight[0];
-	char* txs = (char*)malloc(20*(txCount));
-	for(uint64_t i=0;i<=txCount;i++) fgets(txs+20*i, 20, txDB);
-	free(txNumber);
+	fseek(txSpaceDB, (height-1)*8, SEEK_SET);
+	fgets(txSpace, 8, txSpaceDB);
+	for(uint8_t i=0;i<8;i++) realHeight[0] += txSpace[i] << (8*i);
+	fseek(txSpaceDB, (height-1)*8, SEEK_SET);
+	fgets(txSpace, 8, txSpaceDB);
+	for(uint8_t i=0;i<8;i++) realHeight[1] += txSpace[i] << (8*i);
+	uint64_t txMem = realHeight[1]-realHeight[0];
+	char* txs = (char*)malloc(1);
+	uint64_t i=0;
+	uint8_t currentSize = 0;
+	while(i<=txMem){
+		fgets(txs+i, 1, txDB);
+		currentSize = txs[i]&0x8f;
+		txs = (char*)realloc(txs, i+currentSize);
+		fgets(txs+i, currentSize, txDB);
+		i += currentSize;
+	}
+	free(txSpace);
 	fclose(txDB);
-	fclose(txNumDB);
+	fclose(txSpaceDB);
 	return(txs);
 }
 
