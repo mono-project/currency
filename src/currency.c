@@ -54,19 +54,18 @@ void signRawTx(uint8_t* rawTx, uint8_t* privateKey){
 	// TODO: Sign Tx
 }
 
-void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp, uint8_t* out){
+void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint64_t txMemory, uint64_t difficulty, uint32_t fee, uint32_t timestamp, uint8_t* out){
 	uint8_t  root[64]      = {0};
 	uint8_t  signature[96] = {0};
-	//TODO: Enable adaptive Tx size
-	uint8_t  tx_blocks     = txCount>>6;
+	uint8_t  tx_blocks     = txMemory>>9;
 	uint8_t* txCount_8     = (uint8_t*)&txCount;
 	uint8_t* timestamp_8   = (uint8_t*)&timestamp;
 	uint32_t reward        = (uint32_t)(REWARD_FUNCTION(difficulty)*BASE_REWARD) + txCount*fee;
 	uint8_t* coinbase      = buildCoinbaseTx(minerUserName, reward, timestamp);
 	// TODO: Aggregate signatures using BLS lib
 	blakesl(signature, 96, prevBlockHash, 64, root);
-	crc512(transactions, 24*(tx_blocks<<6), root);
-	if( (tx_blocks<<9) != txCount ) blakesl(&transactions[24*(tx_blocks<<6)], 24*(txCount&0x3F), root, 64, root);
+	crc512(transactions, tx_blocks<<9, root);
+	if( (tx_blocks<<9) != txMemory ) blakesl(&transactions[tx_blocks<<9], txMemory&0x1ff, root, 64, root);
 	for(uint8_t i=0; i<64; i++) out[i    ] = root[i];
 	for(uint8_t i=0; i<96; i++) out[i+ 64] = signature[i];
 	for(uint8_t i=0; i< 4; i++) out[i+160] = txCount_8[i];
