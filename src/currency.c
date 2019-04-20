@@ -12,14 +12,22 @@
 // All BLS code is in "TODO" state, since none of the libraries appear
 // to work.
 
-uint8_t* buildTx(uint8_t* in, uint8_t* out, uint64_t amount){
-	uint8_t* tx       = malloc(128); // Raw transaction data + signature
+uint8_t* buildTx(uint8_t* in, uint8_t* out, uint64_t amount, uint8_t mode){
+	uint8_t* tx       = malloc(121); // Raw transaction data (25) + signature (96)
 	uint8_t* amount_8 = (uint8_t*)&amount;
 	uint8_t* nonce_8  = (uint8_t*)&nonce;
 	uint8_t* fee_8    = (uint8_t*)&fee;
-	for(uint8_t i=0;i<8;i++) tx[i   ] = in[i];
-	for(uint8_t i=0;i<8;i++) tx[i+ 8] = out[i];
-	for(uint8_t i=0;i<8;i++) tx[i+16] = amount_8[i];
+	if(mode == 255){
+		*tx = mode;
+		for(uint8_t i=0;i<48;i++) tx[i+ 1] = in[i];
+		for(uint8_t i=0;i< 8;i++) tx[i+49] = out[i];
+	}
+	else{
+		for(uint8_t i=7;i>=0;i--) *tx += (amount_8[i] == 0);
+		for(uint8_t i=0;i<  8;i++) tx[i+ 1] = in[i];		
+		for(uint8_t i=0;i<  8;i++) tx[i+ 9] = out[i];
+		for(uint8_t i=0;i<*tx;i++) tx[i+17] = amount_8[i];
+	}
 	return tx;
 }
 
@@ -36,8 +44,8 @@ void addNonce(uint8_t* tx, uint64_t nonce){
 	for(uint8_t i=0;i<8;i++) tx[i+24] = nonce_8[i];
 }
 
-uint8_t* constructRawTx(uint8_t* in, uint8_t* out, uint64_t amount, uint64_t nonce){
-	uint8_t* tx = buildTx(in, out, amount);
+uint8_t* constructRawTx(uint8_t* in, uint8_t* out, uint64_t amount, uint64_t nonce, uint8_t mode){
+	uint8_t* tx = buildTx(in, out, amount, mode);
 	addNonce(tx, nonce);
 	return tx;
 }
@@ -49,6 +57,7 @@ void signRawTx(uint8_t* rawTx, uint8_t* privateKey){
 void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp, uint8_t* out){
 	uint8_t  root[64]      = {0};
 	uint8_t  signature[96] = {0};
+	//TODO: Enable adaptive Tx size
 	uint8_t  tx_blocks     = txCount>>6;
 	uint8_t* txCount_8     = (uint8_t*)&txCount;
 	uint8_t* timestamp_8   = (uint8_t*)&timestamp;

@@ -1,6 +1,7 @@
 #ifndef CONF
 #define CONF
 
+#define CURRENCY_NAME "mono"   // Lowercase, written in quotation marks
 #define BASE_REWARD 0x40000000 // Maximum block reward, multiplied with REWARD_FUNCTION(difficulty)
 
 #ifdef GET_REWARD_FUNCTION
@@ -10,5 +11,7 @@
 #define QUICK_VERIFY    // Comment this line if quick verification should not be used in the miner
 			// Pro: Hash verification is faster. Much faster.
 			// Con: Hash verification requires much more L1/L2 cache.
+#define BLOCKTIME 120
+#define BLOCKHEADER_SIZE 180 // Do not change unless internals are changed
 
 #endif

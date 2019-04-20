@@ -1,6 +1,6 @@
 #define MCLBN_FP_UNIT_SIZE 6
 
-#include "bls/bls.hpp"
+#include "BLS/bls.hpp"
 #include <string>
 #include <cstring>
 
