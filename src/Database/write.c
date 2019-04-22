@@ -68,6 +68,14 @@ uint8_t changeFundsForUsername(uint8_t* username, uint64_t change, uint8_t mode)
 	return out;
 }
 
+void setChangeToNull(){
+	snprintf(fileName, 256, folder, "wealthChangeDB");
+	FILE* wealthDB = fopen(fileName, "w");
+	while(fprintf(wealthDB, "00000000", 8));
+	fclose(wealthDB);
+	return;
+}
+
 uint8_t addUsername(uint8_t* username, uint8_t* pubKey){
 	char*     folder   = getFolder();
 	char*     fileName = (char*)malloc(256);
