@@ -137,3 +137,16 @@ uint8_t addUsername(uint8_t* username, uint8_t* pubKey){
 	fclose(pubKeyDB);
 	return 1;
 }
+
+void addHeader(uint8_t* header){
+	char* folder = getFolder();
+	char* fileName = (char*)malloc(256);
+	char* header = (char*)malloc(188);
+	char* hash   = (char*)malloc(64);
+	snprintf(fileName, 256, folder, "headerDB");
+	FILE* headerDB = fopen(fileName, "a");
+	free(fileName);
+	free(folder);
+	fprintf(headerDB, header, 188);
+	fclose(headerDB);
+}
