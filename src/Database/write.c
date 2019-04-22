@@ -75,7 +75,7 @@ void setChangeToNull(){
 	return;
 }
 
-void addChangeToFunds(){
+uint8_t addChangeToFunds(){
 	char*     folder   = getFolder();
 	char*     fileName = (char*)malloc(256);
 	uint64_t* change   = (uint64_t*)malloc(8);
@@ -110,6 +110,7 @@ void addChangeToFunds(){
 	free(folder);
 	fclose(wealthDB);
 	fclose(wealthChangeDB);
+	return 1;
 }
 
 uint8_t addUsername(uint8_t* username, uint8_t* pubKey){
