@@ -35,6 +35,15 @@ uint8_t validateTransactions(uint8_t* block, uint32_t txCount){
 		if(!(status>>7)) return 0;
 		pos += status&0x7F;
 	}
+	uint64_t totalFundchange = getTotalFundchange();
+	if(totalFundchange!=0){
+		setChangeToNull();
+		return 0;
+	}
+	if(!addChangeToFunds()){
+		setChangeToNull();
+		return 0;
+	}
 	return 1;
 	
 }
