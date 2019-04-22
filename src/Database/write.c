@@ -3,7 +3,6 @@
 #include "read.h"
 
 uint8_t prepareFundchangeForUsername(uint8_t* username, uint64_t funds){
-	uint8_t   good     = 1;
 	char*     folder   = getFolder();
 	char*     fileName = (char*)malloc(256);
 	uint64_t* user     = (uint64_t*)malloc(8);
@@ -74,6 +73,43 @@ void setChangeToNull(){
 	while(fprintf(wealthDB, "00000000", 8));
 	fclose(wealthDB);
 	return;
+}
+
+void addChangeToFunds(){
+	char*     folder   = getFolder();
+	char*     fileName = (char*)malloc(256);
+	uint64_t* change   = (uint64_t*)malloc(8);
+	uint64_t* funds    = (uint64_t*)malloc(8);
+	snprintf(fileName, 256, folder, "wealthDB");
+	FILE* wealthDB = fopen(fileName, "r+");
+	snprintf(fileName, 256, folder, "wealthChangeDB");
+	FILE* wealthChangeDB = fopen(fileName, "r");
+	while(fgets(change, 8, wealthChangeDB)){
+		fgets(funds, 8, wealthDB)
+
+		// Check if funds would be negative
+		if((*change&0x7fffffffffffffff) > *funds && !((*change)>>63)) 
+			if()
+				return 0;
+
+		// Check funds would be out greater than the max
+		if(((*change)>>63) && ((*change&0x7fffffffffffffff) + *funds)>>63)
+			return 0;
+		
+	}
+	fseek(wealthDB, 0, SEEK_SET);
+	fseek(wealthChangeDB, 0, SEEK_SET);
+	while(fgets(change, 8, wealthChangeDB)){
+		fgets(funds, 8, wealthDB)
+		if(((*change)>>63)) *funds += change;
+		else *funds -= change;
+		fseek(wealthDB, -8, SEEK_CUR)
+		fprintf(wealthDB, "00000000", 8)
+	}
+	free(fileName);
+	free(folder);
+	fclose(wealthDB);
+	fclose(wealthChangeDB);
 }
 
 uint8_t addUsername(uint8_t* username, uint8_t* pubKey){
