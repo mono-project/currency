@@ -261,25 +261,19 @@ uint64_t getFundchangeForUsername(uint8_t* username){
 uint64_t getTotalFundchange(){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
-	uint64_t* user = (uint64_t*)malloc(8);
 	uint64_t* funds = (uint64_t*)malloc(8);
 	uint64_t  tmp = 0;
 	uint64_t  out = 0;
-	snprintf(fileName, 256, folder, "userDB");
-	FILE* userDB = fopen(fileName, "r");
 	snprintf(fileName, 256, folder, "wealthChangeDB");
 	FILE* wealthChangeDB = fopen(fileName, "r");
 	free(fileName);
 	free(folder);
-	while(fgets(user, 8, userDB)){
-		fgets(funds, 8, wealthChangeDB);
+	while(fgets(funds, 8, wealthChangeDB)){
 		tmp = *funds;
 		if(tmp>>63) out += tmp&0x7fffffffffffffff;
 		else out -= tmp&0x7fffffffffffffff;
 	}
-	free(user);
 	free(funds);
-	fclose(userDB);
 	fclose(wealthChangeDB);
 	return out;
 }
