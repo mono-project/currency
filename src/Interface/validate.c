@@ -1,3 +1,4 @@
+#include "interface.h"
 #include "../currency.h"
 #include "../Crypto/squash.h" 
 #include "../Database/difficulty.h" 
@@ -73,13 +74,19 @@ uint8_t validateBlockHash(uint8_t* block, uint32_t height, uint64_t difficulty){
 uint8_t validateInternalHash(uint8_t* block){
 	uint8_t* hash      = getLastBlockHash();
 	uint32_t txCount   = 0;
-	uint8_t  tx_blocks = 0
+	uint64_t len = 188;
+	uint64_t size = 0;
 	for(uint8_t i=0; i<4; i++) txCount += out[i+160]<<(8*i);;
-	tx_blocks = txCount>>6;
+	for(uint32_t i=0; i<txCount;i++){
+		size = block[pos]&0x7F;
+		len += size;
+	}
+	len -= 188; size = len;
+	len >>= 9; len <<= 9;
 	blakesl(&block[64], 96, hash, 64, hash);
 	//TODO: Enable adaptive Tx size
-	crc512(&block[188], 24*(tx_blocks<<6), hash);
-	if( (tx_blocks<<9) != txCount ) blakesl(&block[188+24*(tx_blocks<<6)], 24*(txCount&0x3F), hash, 64, hash);
+	crc512(&block[188], len, hash);
+	if(len != size) blakesl(&block[188+len], size-len, hash, 64, hash);
 	for(uint8_t i=0;i<64;i++) if(block[i] != hash[i]) return 0;
 	free(hash);
 	return 1;
@@ -91,6 +98,11 @@ uint8_t validateBlock(uint8_t* block, uint32_t height){
 	uint64_t difficulty = getDifficultyForTimestamp(timestamp, height);
 	if(!validateBlockHash(block, height, difficulty)) return 0;
 	if(!validateTransactions(block)) return 0;
-	if(!validateInternalHash(block)) return 0;
+	if(!validateInternalHash(block)){
+		// TODO: Try adding blocks corresponding to
+		// "the other" chain. If not working, return 0.
+		// addBlockToDBVerify(prevBlockOnDifferentChain, height-1);
+		return 0;
+	}
 	return 1;
 }
