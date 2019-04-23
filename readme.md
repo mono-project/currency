@@ -12,9 +12,12 @@
 - [x] Add variable transaction size read (DB)
 - [x] Add variable transaction size allocation (Block creation)
 - [ ] **Network**
-- [ ] Broadcast block when found
 - [ ] Add block when received
 - [ ] Add protocol to indicate when data will be transfered
 - [ ] Allow protocol to tell what kind of data it is
 - [ ] Verify received block
 - [ ] Reorg if needed (+ check)
+- [ ] **Miner**
+- [ ] Broadcast block when found
+- [ ] Include transactions in block
+– [ ] Mine
