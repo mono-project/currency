@@ -1,6 +1,6 @@
 #### ToDo
-- [ ] **Core**
-- [ ] Add possibility to perform reorg (sync after chainsplit)
+- [x] **Core**
+- [x] Add possibility to perform reorg (sync after chainsplit)
 - [x] Verify first and then add to Database
 - [ ] **BLS**
 - [ ] Fix BLS Lib
