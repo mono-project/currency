@@ -1,8 +1,7 @@
-#ifndef BLAKE2_H
-#define BLAKE2_H
+#ifndef BLAKE_H
+#define BLAKE_H
 
-#include "Blake2/neon/blake2.h"
-#include "Blake2/sse/blake2.h"
+#include "blake2/blake2.h"
 #include <string.h>
 #include <stdint.h>
 

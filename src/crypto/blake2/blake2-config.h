@@ -1,5 +1,3 @@
-#ifdef __SSE2__
-
 /*
    BLAKE2 reference source code package - optimized C implementations
 
@@ -72,5 +70,3 @@
 #endif
 
 #endif
-
-#endif //idef __SSE2__

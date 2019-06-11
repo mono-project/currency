@@ -1,5 +1,3 @@
-#ifdef __SSE2__
-
 /*
    BLAKE2 reference source code package - optimized C implementations
 
@@ -402,5 +400,3 @@ b1 = _mm_unpackhi_epi64(m3, m1); \
 
 
 #endif
-
-#endif //idef __SSE2__

@@ -1,5 +1,3 @@
-#ifndef __SSE2__
-
 /*
    BLAKE2 reference source code package - reference C implementations
 
@@ -160,5 +158,3 @@ static BLAKE2_INLINE void secure_zero_memory(void *v, size_t n)
 }
 
 #endif
-
-#endif //ifndef __SSE2__
