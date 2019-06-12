@@ -11,7 +11,8 @@
 - [ ] Allow protocol to tell what kind of data it is
 - [ ] Verify received block
 - [ ] Reorg if needed (+ check)
-- [ ] **Miner**
+- [ ] **PoS**
 - [ ] Broadcast block when found
 - [ ] Include transactions in block
 – [ ] Mine
+- [ ] Exclude transactions from PoS kernel
