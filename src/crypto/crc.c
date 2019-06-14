@@ -81,6 +81,28 @@ uint32_t crc32(uint32_t msg) {
 	return crc;
 }
 
+void crc32p(uint32_t* in, uint32_t* out) { // CRC32-Pointer
+#if defined(__aarch64__) && defined(__ARM_FEATURE_CRC32)
+	__asm__("crc32w %w0,%w0,%w1\n":"+r"(*out):"r"(*in));
+#else
+	*out=crc32c_table[(*in )&0xff]^((*in )>>8);
+	*out=crc32c_table[(*out)&0xff]^((*out)>>8);
+	*out=crc32c_table[(*out)&0xff]^((*out)>>8);
+	*out=crc32c_table[(*out)&0xff]^((*out)>>8);
+#endif
+}
+
+void crc32i(uint32_t* in) { // CRC32-Inplace
+#if defined(__aarch64__) && defined(__ARM_FEATURE_CRC32)
+	__asm__("crc32w %w0,%w0,%w1\n":"+r"(*in):"r"(*in));
+#else
+	*in=crc32c_table[(*in)&0xff]^((*in)>>8);
+	*in=crc32c_table[(*in)&0xff]^((*in)>>8);
+	*in=crc32c_table[(*in)&0xff]^((*in)>>8);
+	*in=crc32c_table[(*in)&0xff]^((*in)>>8);
+#endif
+}
+
 void crc256(uint8_t* in, uint32_t len, uint8_t* out){
 	uint8_t   temp[16]  = {0};
 	uint32_t* temp_32_0 = (uint32_t*)temp;
