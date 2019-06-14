@@ -12,15 +12,42 @@
 // All EdDSA code is in "TODO" state, since none of the libraries appear
 // to work.
 
-uint8_t* buildTx(uint8_t* in, uint8_t* out, uint64_t amount, uint8_t mode){
-	uint8_t* tx       = malloc(121); // Raw transaction data (25) + signature (96)
-	uint8_t* amount_8 = (uint8_t*)&amount;
-	uint8_t* nonce_8  = (uint8_t*)&nonce;
-	uint8_t* fee_8    = (uint8_t*)&fee;
-	if(mode == 255){
-		*tx = mode;
-		for(uint8_t i=0;i<48;i++) tx[i+ 1] = in[i];
-		for(uint8_t i=0;i< 8;i++) tx[i+49] = out[i];
+uint8_t* buildCoinbaseTx(uint8_t* out, uint32_t amount){
+	uint8_t* tx = (uint8_t*)malloc(9);
+	uint8_t* amount_8    = (uint8_t*)&amount;
+	for(uint8_t i=0;i<5;i++) tx[i] = out[i];
+	*(uint32_t*)&out[5] = amount;
+	return tx;
+}
+
+void addNonce(uint8_t* tx, uint64_t nonce){
+	uint8_t* nonce_8 = (uint8_t*)&nonce;
+	for(uint8_t i=0;i<8;i++) tx[i] = nonce_8[i];
+}
+
+uint8_t* constructRawTx(uint8_t* in, uint8_t* out, uint64_t amount, uint64_t nonce){
+	uint64_t* tx_64    = (uint64_t*)malloc(86);
+	uint8_t*  tx       = (uint8_t*)tx_64; // Raw transaction data (26) + signature (64)
+	uint8_t*  amount_8 = (uint8_t*)&amount;
+	uint8_t*  nonce_8  = (uint8_t*)&nonce;
+	uint8_t*  fee_8    = (uint8_t*)&fee;
+	if(!nonce){
+		uint64_t* txNonce   = (uint64_t*)&tx[45];
+		uint64_t  powHash_0 = 0;
+		uint64_t  powHash_1 = 0;
+		uint32_t* powH_32_0 =   (uint32_t*)&powHash_1;
+		uint32_t* powH_32_1 = &((uint32_t*)&powHash_1)[1];
+		for(uint8_t i=0;i<32;i++) tx[i+ 8] = in[i];
+		for(uint8_t i=0;i< 5;i++) tx[i+40] = out[i];
+		powHash_0 = *tx_64 + tx_64[1] + tx_64[2] + tx_64[3] + tx_64[4] + tx_64[5] + tx_64[6];
+		*txNonce++;
+		while(1){
+			powHash_1 = powHash_0 ^ *txNonce;
+			crc32i(powH_32_0);
+			crc32i(powH_32_1);
+			*txNonce = powHash_1;
+			if(powHash_1 < 0x1000000000) break;
+		}
 	}
 	else{
 		for(uint8_t i=7;i>=0;i--) *tx += (amount_8[i] == 0);
@@ -28,24 +55,6 @@ uint8_t* buildTx(uint8_t* in, uint8_t* out, uint64_t amount, uint8_t mode){
 		for(uint8_t i=0;i<  8;i++) tx[i+ 9] = out[i];
 		for(uint8_t i=0;i<*tx;i++) tx[i+17] = amount_8[i];
 	}
-	return tx;
-}
-
-uint8_t* buildCoinbaseTx(uint8_t* out, uint32_t amount){
-	uint8_t* tx          = malloc(44);
-	uint8_t* amount_8    = (uint8_t*)&amount;
-	for(uint8_t i=0;i<8;i++) tx[i]   = out[i];
-	for(uint8_t i=0;i<4;i++) tx[i+8] = amount_8[i];
-	return tx;
-}
-
-void addNonce(uint8_t* tx, uint64_t nonce){
-	uint8_t* nonce_8 = (uint8_t*)&nonce;
-	for(uint8_t i=0;i<8;i++) tx[i+24] = nonce_8[i];
-}
-
-uint8_t* constructRawTx(uint8_t* in, uint8_t* out, uint64_t amount, uint64_t nonce, uint8_t mode){
-	uint8_t* tx = buildTx(in, out, amount, mode);
 	addNonce(tx, nonce);
 	return tx;
 }
