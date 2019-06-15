@@ -1,16 +1,14 @@
 #### ToDo
-- [x] **Core**
-- [x] Add possibility to perform reorg (sync after chainsplit)
-- [x] Verify first and then add to Database
-- [x] **Transactions**
-- [x] Add variable transaction size read (DB)
-- [x] Add variable transaction size allocation (Block creation)
+- [ ] **Core**
+- [ ] Make chainsplits -> Reorgs impossible
+- [ ] Rework database
+- [ ] Rework interface
 - [ ] **Network**
 - [ ] Add block when received
 - [ ] Add protocol to indicate when data will be transfered
 - [ ] Allow protocol to tell what kind of data it is
 - [ ] Verify received block
-- [ ] Reorg if needed (+ check)
+- [ ] Synchronise latest state instead of entire chain
 - [ ] **PoS**
 - [ ] Broadcast block when found
 - [ ] Include transactions in block
