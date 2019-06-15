@@ -26,12 +26,8 @@ void addNonce(uint8_t* tx, uint64_t nonce){
 }
 
 uint8_t* constructRawTx(uint8_t* in, uint8_t* out, uint64_t amount, uint64_t nonce){
-	uint64_t* tx_64    = (uint64_t*)malloc(86);
-	uint8_t*  tx       = (uint8_t*)tx_64; // Raw transaction data (26) + signature (64)
-	uint8_t*  amount_8 = (uint8_t*)&amount;
-	uint8_t*  nonce_8  = (uint8_t*)&nonce;
-	uint8_t*  fee_8    = (uint8_t*)&fee;
 	if(!nonce){
+		uint64_t* tx_64     = (uint64_t*)malloc(53); //64bit PoW, 64bit nonce, 5 byte out, 32 byte in
 		uint64_t* txNonce   = (uint64_t*)&tx[45];
 		uint64_t  powHash_0 = 0;
 		uint64_t  powHash_1 = 0;
@@ -50,10 +46,13 @@ uint8_t* constructRawTx(uint8_t* in, uint8_t* out, uint64_t amount, uint64_t non
 		}
 	}
 	else{
-		for(uint8_t i=7;i>=0;i--) *tx += (amount_8[i] == 0);
-		for(uint8_t i=0;i<  8;i++) tx[i+ 1] = in[i];		
-		for(uint8_t i=0;i<  8;i++) tx[i+ 9] = out[i];
-		for(uint8_t i=0;i<*tx;i++) tx[i+17] = amount_8[i];
+		uint64_t* tx_64    = (uint64_t*)malloc(90); // Raw transaction data (26) + signature (64)
+		uint8_t*  tx       = (uint8_t*)tx_64; 
+		uint8_t*  amount_8 = (uint8_t*)&amount;
+		*tx_64 = nonce;
+		tx_64[1] = amount;
+		for(uint8_t i=0;i<5;i++) tx[i+16] = in[i];		
+		for(uint8_t i=0;i<5;i++) tx[i+21] = out[i];
 	}
 	addNonce(tx, nonce);
 	return tx;
