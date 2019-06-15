@@ -54,8 +54,8 @@ uint8_t* constructRawTx(uint8_t* in, uint8_t* out, uint64_t amount, uint64_t non
 	return tx;
 }
 
-void signRawTx(uint8_t* rawTx, uint8_t* privateKey){
-	// TODO: Sign Tx
+void signRawTx(uint8_t* rawTx, uint8_t* publicKey, uint8_t* privateKey){
+	sign(&rawTx[26], publicKey, privateKey, rawTx, 26);
 }
 
 void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp, uint8_t* out){
