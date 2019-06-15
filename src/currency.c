@@ -9,10 +9,6 @@
 
 #include "config.h"
 
-// The following code assumes that little endian is globally used.
-// All EdDSA code is in "TODO" state, since none of the libraries appear
-// to work.
-
 uint8_t* buildCoinbaseTx(uint8_t* out, uint32_t amount){
 	uint8_t* tx = (uint8_t*)malloc(9);
 	uint8_t* amount_8    = (uint8_t*)&amount;
@@ -58,29 +54,29 @@ void signRawTx(uint8_t* rawTx, uint8_t* publicKey, uint8_t* privateKey){
 	sign(&rawTx[26], publicKey, privateKey, rawTx, 26);
 }
 
-void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp, uint8_t* out){
+void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* prevStateHash, uint64_t txMemory, uint64_t difficulty, uint32_t fee, uint32_t timestamp, uint8_t* out){
 	uint8_t  root[64]      = {0};
-	uint32_t reward        = (uint32_t)(REWARD_FUNCTION(difficulty)*BASE_REWARD) + txCount*fee;
+	uint32_t reward        = (uint32_t)(REWARD_FUNCTION(difficulty)*BASE_REWARD) + txMemory*fee;
 	uint8_t* coinbase      = buildCoinbaseTx(minerUserName, reward);
-	blakesl(transactions, txCount*90, prevBlockHash, 64, root);
+	blakesl(transactions, txMemory, prevStateHash, 64, root);
 	for(uint8_t i=0; i<64; i++) out[i] = root[i];
 	*(uint32_t*)&out[64] = txCount;
-	*(uint32_t*)&out[68] = timestamp;
-	for(uint8_t i=0; i<12; i++) out[i+72] = coinbase[i];
+	*(uint32_t*)&out[72] = timestamp;
+	for(uint8_t i=0; i<12; i++) out[i+76] = coinbase[i];
 	// Eight Nonce Bytes
 }
 
-uint8_t* blockTemplate(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevBlockHash, uint32_t txCount, uint64_t difficulty, uint32_t fee, uint32_t timestamp){
-	uint8_t* block = (uint8_t*)malloc(88+txCount*90);
-	blockHeader(minerUserName, transactions, signatures, prevBlockHash, txCount, difficulty, fee, timestamp);
-	for(uint32_t i=0;i<txCount;i++) for(uint32_t j=0;j<90;j++) block[88+90*i+j] = transactions[90*i+j];
+uint8_t* blockTemplate(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevStateHash, uint64_t txMemory, uint64_t difficulty, uint32_t fee, uint32_t timestamp){
+	uint8_t* block = (uint8_t*)malloc(92+txMemory);
+	blockHeader(minerUserName, transactions, signatures, prevStateHash, txMemory, difficulty, fee, timestamp);
+	for(uint64_t i=0;i<txMemory;i++) block[i] = transactions[i];
 	return block;
 }
 
 uint8_t* blockTemplateFromHeader(uint8_t* header, uint8_t* transactions){
 	uint8_t* block = (uint8_t*)malloc(88+txCount*90);
 	for(uint8_t i=0;i<88;i++) block[i] = header[i];
-	uint32_t txCount = *(uint32_t*)&block[64];
-	for(uint32_t i=0;i<txCount;i++) for(uint32_t j=0;j<90;j++) block[88+90*i+j] = transactions[90*i+j];
+	uint64_t txCount = *(uint64_t*)&block[64];
+	for(uint64_t i=0;i<txMemory;i++) block[i] = transactions[i];
 	return block;
 }
