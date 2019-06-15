@@ -20,11 +20,6 @@ uint8_t* buildCoinbaseTx(uint8_t* out, uint32_t amount){
 	return tx;
 }
 
-void addNonce(uint8_t* tx, uint64_t nonce){
-	uint8_t* nonce_8 = (uint8_t*)&nonce;
-	for(uint8_t i=0;i<8;i++) tx[i] = nonce_8[i];
-}
-
 uint8_t* constructRawTx(uint8_t* in, uint8_t* out, uint64_t amount, uint64_t nonce){
 	if(!nonce){
 		uint64_t* tx_64     = (uint64_t*)malloc(53); //64bit PoW, 64bit nonce, 5 byte out, 32 byte in
@@ -54,7 +49,6 @@ uint8_t* constructRawTx(uint8_t* in, uint8_t* out, uint64_t amount, uint64_t non
 		for(uint8_t i=0;i<5;i++) tx[i+16] = in[i];		
 		for(uint8_t i=0;i<5;i++) tx[i+21] = out[i];
 	}
-	addNonce(tx, nonce);
 	return tx;
 }
 
