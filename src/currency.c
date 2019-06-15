@@ -67,15 +67,15 @@ void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* prevSta
 }
 
 uint8_t* blockTemplate(uint8_t* minerUserName, uint8_t* transactions, uint8_t* signatures, uint8_t* prevStateHash, uint64_t txMemory, uint64_t difficulty, uint32_t fee, uint32_t timestamp){
-	uint8_t* block = (uint8_t*)malloc(92+txMemory);
+	uint8_t* block = (uint8_t*)malloc(96+txMemory);
 	blockHeader(minerUserName, transactions, signatures, prevStateHash, txMemory, difficulty, fee, timestamp);
 	for(uint64_t i=0;i<txMemory;i++) block[i] = transactions[i];
 	return block;
 }
 
 uint8_t* blockTemplateFromHeader(uint8_t* header, uint8_t* transactions){
-	uint8_t* block = (uint8_t*)malloc(88+txCount*90);
-	for(uint8_t i=0;i<88;i++) block[i] = header[i];
+	uint8_t* block = (uint8_t*)malloc(96+txCount*90);
+	for(uint8_t i=0;i<96;i++) block[i] = header[i];
 	uint64_t txCount = *(uint64_t*)&block[64];
 	for(uint64_t i=0;i<txMemory;i++) block[i] = transactions[i];
 	return block;
