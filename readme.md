@@ -9,8 +9,7 @@
 - [ ] Allow protocol to tell what kind of data it is
 - [ ] Verify received block
 - [ ] Synchronise latest state instead of entire chain
-- [ ] **PoS**
-- [ ] Broadcast block when found
+- [ ] **DPoS**
+- [ ] Select node before mining block
 - [ ] Include transactions in block
 – [ ] Mine
-- [ ] Exclude transactions from PoS kernel
