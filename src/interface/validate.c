@@ -44,14 +44,12 @@ uint8_t validateTransactions(uint8_t* block, uint64_t txMemory){
 }
 
 uint8_t* hashBlock(uint8_t* block, uint32_t height){
-	uint64_t* hash_64 = (uint64_t*)malloc(64);
-	uint8_t*  hash    = (uint8_t*)hash_64;
+	uint8_t*  hash    = (uint8_t*)malloc(64);
 	if(!height){
-		blakeln(block, 188, hash);
+		blakeln(block, 96, hash);
 	} else {
-		uint32_t txCount = 0;
-		for(uint8_t i=0; i<32;i+=4) txCount += block[i+160]<<(8*i);
-		squash_light_api(block, 188+txCount*24, hash, height);
+		uint64_t txMemory = *(uint64_t*)&out[64];
+		squash_light_api(block, 96+txMemory, hash, height);
 	}
 	return hash;
 }
