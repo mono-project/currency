@@ -1,12 +1,11 @@
 #include "interface.h"
 #include "../currency.h"
 #include "../Crypto/squash.h" 
-#include "../Database/difficulty.h" 
 #include "../Database/read.h" 
 #include "../Database/write.h"
-//#include "../crypto/bls.h" TODO: BLS Lib
+#include "../crypto/eddsa.h"
 
-uint8_t validateBlockSignature(uint8_t* block){
+uint8_t validateSignature(uint8_t* block){
 	uint8_t* signature = &block[64];
 	uint8_t* transactions = &block[188];
 	//TODO if(missmatch) return 0
