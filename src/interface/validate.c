@@ -54,31 +54,12 @@ uint8_t* hashBlock(uint8_t* block, uint32_t height){
 	return hash;
 }
 
-uint8_t validateHash(uint8_t* hash, uint64_t difficulty){
-	return(checkDiff(difficulty, hash));
-}
-
-uint8_t validateBlockHash(uint8_t* block, uint32_t height, uint64_t difficulty){
-	uint8_t*  hash = hashBlock(block, height);
-	return(validateHash(hash, difficulty));
-} 
-
 uint8_t validateInternalHash(uint8_t* block){
 	uint8_t* hash      = getLastBlockHash();
-	uint32_t txCount   = 0;
-	uint64_t len = 188;
+	uint64_t len = 96;
 	uint64_t size = 0;
-	for(uint8_t i=0; i<4; i++) txCount += out[i+160]<<(8*i);;
-	for(uint32_t i=0; i<txCount;i++){
-		size = block[pos]&0x7F;
-		len += size;
-	}
-	len -= 188; size = len;
-	len >>= 9; len <<= 9;
-	blakesl(&block[64], 96, hash, 64, hash);
-	//TODO: Enable adaptive Tx size
-	crc512(&block[188], len, hash);
-	if(len != size) blakesl(&block[188+len], size-len, hash, 64, hash);
+	blakesl(block, 96, hash, 64, hash);
+	blakesl(&block[96], txMemory, hash, 64, hash);
 	for(uint8_t i=0;i<64;i++) if(block[i] != hash[i]) return 0;
 	free(hash);
 	return 1;
