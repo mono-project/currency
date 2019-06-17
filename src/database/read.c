@@ -2,88 +2,11 @@
 #include <stdint.h>
 #include "../config.h"
 #include "../Crypto/blake2.h"
-#include "difficulty.h"
 
 char* getFolder(){
 	char* folder = calloc(256,1);
 	snprintf(folder, 256, "~/.%s/", CURRENCY_NAME);
 	return(folder);
-}
-
-uint64_t calcDifficultyForHeight(uint32_t height){
-	char* folder = getFolder();
-	char* fileName = (char*)malloc(256);
-	snprintf(fileName, 256, folder, "diffDB");
-	FILE* diffDB = fopen(fileName, "r");
-	snprintf(fileName, 256, folder, "headerDB");
-	FILE* headerDB = fopen(fileName, "r");
-	free(fileName);
-	free(folder);
-
-	uint32_t headerCnt = 0;
-	uint32_t diffCnt = 0;
-	uint32_t timestamps[256] = 0;
-	uint64_t difficulties[256] = 0;
-	uint32_t lastDiff = 0;
-	char headerBuf[BLOCKHEADER_SIZE];
-	char diffBuf[BLOCKHEADER_SIZE];
-	while(fgets(headerBuf, BLOCKHEADER_SIZE, headerDB)) headerCnt++;
-	while(fgets(diffBuf, 8, diffDB)) diffCnt++;
-	if(headerCnt < 256 && diffCnt < 256) return 1;
-	fseek(diffDB, (diffCnt-256)*8, SEEK_SET);	
-	fseek(headerDB, (headerCnt-256)*BLOCKHEADER_SIZE, SEEK_SET);	
-	for(uint16_t j=0;j<256;j++){
-		fgets(diffBuf, 8, diffDB)
-		fgets(headerBuf, BLOCKHEADER_SIZE, headerDB)
-		for(uint8_t i=0;i<4;i++){
-			timestamps[j] += headerBuf[i+j*BLOCKHEADER_SIZE] << (8*i);
-		}
-		for(uint8_t i=0;i<8;i++){
-			difficulties[j] += diffBuf[i+j<<2] << (8*i);
-		}
-	}
-	fclose(diffDB);
-	fclose(headerDB);
-	return(diff(difficulties, timestamps, -1));
-}
-
-uint64_t getDifficultyForTimestamp(uint32_t prevTimestamp, uint32_t height){
-// Needed for TSA Difficulty (https://github.com/zawy12/difficulty-algorithms/issues/36)
-	char* folder = getFolder();
-	char* fileName = (char*)malloc(256);
-	snprintf(fileName, 256, folder, "diffDB");
-	FILE* diffDB = fopen(fileName, "r");
-	snprintf(fileName, 256, folder, "headerDB");
-	FILE* headerDB = fopen(fileName, "r");
-	free(fileName);
-	free(folder);
-
-	uint32_t headerCnt = 0;
-	uint32_t diffCnt = 0;
-	uint32_t timestamps[256] = 0;
-	uint64_t difficulties[256] = 0;
-	uint32_t lastDiff = 0;
-	char headerBuf[BLOCKHEADER_SIZE];
-	char diffBuf[BLOCKHEADER_SIZE];
-	while(fgets(headerBuf, BLOCKHEADER_SIZE, headerDB)) headerCnt++;
-	while(fgets(diffBuf, 8, diffDB)) diffCnt++;
-	if(headerCnt < 256 && diffCnt < 256) return 1;
-	fseek(diffDB, (diffCnt-256)*8, SEEK_SET);	
-	fseek(headerDB, (headerCnt-255)*BLOCKHEADER_SIZE, SEEK_SET);	
-	for(uint16_t j=0;j<256;j++){
-		fgets(diffBuf, 8, diffDB)
-		fgets(headerBuf, BLOCKHEADER_SIZE, headerDB)
-		for(uint8_t i=0;i<4;i++){
-			timestamps[j] += headerBuf[i+j*BLOCKHEADER_SIZE] << (8*i);
-		}
-		for(uint8_t i=0;i<8;i++){
-			difficulties[j] += diffBuf[i+j<<2] << (8*i);
-		}
-	}
-	timestamps[255] = prevTimestamp;
-	fclose(diffDB);
-	fclose(headerDB);
-	return(diff(difficulties, timestamps, -1));
 }
 
 uint8_t* getTx(uint64_t txNumber){
