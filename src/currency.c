@@ -41,7 +41,6 @@ uint8_t* constructRawTx(uint8_t* in, uint8_t* out, uint64_t amount, uint64_t non
 	else{
 		uint64_t* tx_64    = (uint64_t*)malloc(90); // Raw transaction data (26) + signature (64)
 		uint8_t*  tx       = (uint8_t*)tx_64; 
-		uint8_t*  amount_8 = (uint8_t*)&amount;
 		*tx_64 = nonce;
 		tx_64[1] = amount;
 		for(uint8_t i=0;i<5;i++) tx[i+16] = in[i];		
@@ -60,7 +59,7 @@ void blockHeader(uint8_t* minerUserName, uint8_t* transactions, uint8_t* prevSta
 	uint8_t* coinbase      = buildCoinbaseTx(minerUserName, reward);
 	blakesl(transactions, txMemory, prevStateHash, 64, root);
 	for(uint8_t i=0; i<64; i++) out[i] = root[i];
-	*(uint32_t*)&out[64] = txCount;
+	*(uint64_t*)&out[64] = txMemory;
 	*(uint32_t*)&out[72] = timestamp;
 	for(uint8_t i=0; i<12; i++) out[i+76] = coinbase[i];
 	// Eight Nonce Bytes
