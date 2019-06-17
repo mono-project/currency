@@ -66,16 +66,8 @@ uint8_t validateInternalHash(uint8_t* block){
 }
 
 uint8_t validateBlock(uint8_t* block, uint32_t height){
-	uint32_t timestamp = 0;
-	for(uint8_t i=0; i<4; i++) timestamp += block[i+164]<<(8*i);
-	uint64_t difficulty = getDifficultyForTimestamp(timestamp, height);
-	if(!validateBlockHash(block, height, difficulty)) return 0;
+	uint32_t timestamp = *(uint32_t*)&block[72];
 	if(!validateTransactions(block)) return 0;
-	if(!validateInternalHash(block)){
-		// TODO: Try adding blocks corresponding to
-		// "the other" chain. If not working, return 0.
-		// addBlockToDBVerify(prevBlockOnDifferentChain, height-1);
-		return 0;
-	}
+	if(!validateInternalHash(block)) return 0;
 	return 1;
 }
