@@ -24,13 +24,11 @@ uint8_t processTransaction(uint8_t* transaction){
 	return 1;
 }
 
-uint8_t validateTransactions(uint8_t* block, uint32_t txCount){
-	if(!validateBlockSignature(block)) return 0;
-	uint64_t pos = 188;
-	for(uint32_t i=0;i<txCount;i++){
-		uint8_t status = processTransaction(&block[pos]);
-		if(!(status>>7)) return 0;
-		pos += status&0x7F;
+uint8_t validateTransactions(uint8_t* block, uint64_t txMemory){
+	uint64_t pos = 96;
+	while(pos < txMemory){
+		if(!processTransaction(&block[pos])) return 0;
+		pos += (*(uint64_t*)&block[pos])?90:57;
 	}
 	uint64_t totalFundchange = getTotalFundchange();
 	if(totalFundchange!=0){
