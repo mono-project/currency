@@ -194,16 +194,16 @@ uint64_t getTotalFundchange(){
 uint64_t* getPubKeys(){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
-	uint64_t* pubKey = (uint64_t*)malloc(48);
+	uint64_t* pubKey = (uint64_t*)malloc(32);
 	snprintf(fileName, 256, folder, "pubKeyDB");
 	FILE* pubKeyDB = fopen(fileName, "r");
 	free(fileName);
 	free(folder);
 
 	uint32_t keyCount = 0;
-	while(fgets(pubKey, 48, pubKeyDB)) keyCount++;
+	while(fgets(pubKey, 32, pubKeyDB)) keyCount++;
 	fseek(pubKeyDB, 0, SEEK_SET)
-	uint64_t* pubKeys = (uint64_t*)malloc(keyCount*48);
+	uint64_t* pubKeys = (uint64_t*)malloc(keyCount*32);
 	for(uint32_t i=0;i<keyCount;i++){
 		fgets(pubKey, 5, pubKeyDB)
 		for(uint8_t j=0;j<5;j++){
