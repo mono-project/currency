@@ -37,31 +37,10 @@ uint8_t prepareFundchangeForUsername(uint8_t* username, uint64_t funds){
 	return 0;
 }
 
-uint8_t changeFundsForUsername(uint8_t* username, uint64_t change, uint8_t mode){
-	// Mode 1 = Add (+)
-	// Mode 0 = Sub (-)
-	uint64_t prevChange = getFundchangeForUsername(username);
-	uint64_t curChange = change&0x7fffffffffffffff;
-	uint8_t curMode = (prevChange&0x8000000000000000)>>63;
-	uint8_t out = 0;
-	if(curMode){
-		prevChange += curChange;
-	}else{
-		if(curChange > prevChange){
-			prevChange = curChange - prevChange;
-			curMode ^= 1;
-		}else{
-			prevChange -= curChange;
-		}
-	}	
-	if(curChange&0x8000000000000000){
-		printf("[Error] Unable to change funds, username not found\n");
-		return 0;
-	}
-	curChange = (curMode<<63) | curChange;
-	out = prepareFundchangeForUsername(username, curChange);
+uint8_t changeFundsForUsername(uint8_t* username, int64_t change){
+	uint8_t out = prepareFundchangeForUsername(username, change + getFundchangeForUsername(username));
 	if(!out) printf("[Error] Unable to change funds, username not found\n");
-	return out;
+	return out; 
 }
 
 void setChangeToNull(){
