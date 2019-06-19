@@ -5,9 +5,7 @@
 #include "../Database/write.h"
 #include "../crypto/eddsa.h"
 
-uint8_t validateSignature(uint8_t* block){
-	uint8_t* signature = &block[64];
-	uint8_t* transactions = &block[188];
+uint8_t validateSignature(uint8_t* transaction){
 	//TODO if(missmatch) return 0
 }
 
