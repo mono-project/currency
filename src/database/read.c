@@ -91,20 +91,20 @@ uint32_t* getPeerList(){
 uint32_t* getUsernames(){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
-	uint64_t* user = (uint64_t*)malloc(8);
+	uint64_t* user = (uint64_t*)malloc(5);
 	snprintf(fileName, 256, folder, "userDB");
 	FILE* userDB = fopen(fileName, "r");
 	free(fileName);
 	free(folder);
 
 	uint32_t userCount = 0;
-	while(fgets(user, 8, userDB)) userCount++;
+	while(fgets(user, 5, userDB)) userCount++;
 	fseek(userDB, 0, SEEK_SET)
-	uint64_t* users = (uint64_t*)malloc(userCount*8);
+	uint64_t* users = (uint64_t*)malloc(userCount*5);
 	for(uint32_t i=0;i<userCount;i++){
-		fgets(user, 8, userDB)
-		for(uint8_t j=0;j<8;j++){
-			users[i] += user[j] << (8*j);
+		fgets(user, 5, userDB)
+		for(uint8_t j=0;j<5;j++){
+			users[i] += user[j] << (5*j);
 		}
 	}
 	free(user);
@@ -115,7 +115,7 @@ uint32_t* getUsernames(){
 uint64_t getFundsForUsername(uint8_t* username){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
-	uint64_t* user = (uint64_t*)malloc(8);
+	uint64_t* user = (uint64_t*)malloc(5);
 	uint64_t* funds = (uint64_t*)malloc(8);
 	uint64_t  out = 0;
 	snprintf(fileName, 256, folder, "userDB");
@@ -124,16 +124,13 @@ uint64_t getFundsForUsername(uint8_t* username){
 	FILE* wealthDB = fopen(fileName, "r");
 	free(fileName);
 	free(folder);
-	while(fgets(user, 8, userDB)){
+	while(fgets(user, 5, userDB)){
 		fgets(funds, 8, wealthDB);
 		if(user[0] != username[0]
 		|| user[1] != username[1]
 		|| user[2] != username[2]
 		|| user[3] != username[3]
-		|| user[4] != username[4]
-		|| user[5] != username[5]
-		|| user[6] != username[6]
-		|| user[7] != username[7]) continue;
+		|| user[4] != username[4]) continue;
 		fclose(userDB);
 		fclose(wealthDB);
 		out = *funds;
@@ -149,7 +146,7 @@ uint64_t getFundsForUsername(uint8_t* username){
 uint64_t getFundchangeForUsername(uint8_t* username){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
-	uint64_t* user = (uint64_t*)malloc(8);
+	uint64_t* user = (uint64_t*)malloc(5);
 	uint64_t* funds = (uint64_t*)malloc(8);
 	uint64_t  out = 0;
 	snprintf(fileName, 256, folder, "userDB");
@@ -158,16 +155,13 @@ uint64_t getFundchangeForUsername(uint8_t* username){
 	FILE* wealthChangeDB = fopen(fileName, "r");
 	free(fileName);
 	free(folder);
-	while(fgets(user, 8, userDB)){
+	while(fgets(user, 5, userDB)){
 		fgets(funds, 8, wealthChangeDB);
 		if(user[0] != username[0]
 		|| user[1] != username[1]
 		|| user[2] != username[2]
 		|| user[3] != username[3]
-		|| user[4] != username[4]
-		|| user[5] != username[5]
-		|| user[6] != username[6]
-		|| user[7] != username[7]) continue;
+		|| user[4] != username[4]) continue;
 		fclose(userDB);
 		fclose(wealthChangeDB);
 		out = *funds;
@@ -215,9 +209,9 @@ uint64_t* getPubKeys(){
 	fseek(pubKeyDB, 0, SEEK_SET)
 	uint64_t* pubKeys = (uint64_t*)malloc(keyCount*48);
 	for(uint32_t i=0;i<keyCount;i++){
-		fgets(pubKey, 8, pubKeyDB)
-		for(uint8_t j=0;j<8;j++){
-			pubKeys[i] += pubKey[j] << (8*j);
+		fgets(pubKey, 5, pubKeyDB)
+		for(uint8_t j=0;j<5;j++){
+			pubKeys[i] += pubKey[j] << (5*j);
 		}
 	}
 	free(pubKey);
