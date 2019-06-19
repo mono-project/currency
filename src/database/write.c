@@ -5,7 +5,7 @@
 uint8_t prepareFundchangeForUsername(uint8_t* username, uint64_t funds){
 	char*     folder   = getFolder();
 	char*     fileName = (char*)malloc(256);
-	uint64_t* user     = (uint64_t*)malloc(8);
+	uint64_t* user     = (uint64_t*)malloc(5);
 	uint64_t* funds    = (uint64_t*)malloc(8);
 	uint8_t*  funds_8  =  (uint8_t*)&funds;
 	snprintf(fileName, 256, folder, "userDB");
@@ -14,15 +14,12 @@ uint8_t prepareFundchangeForUsername(uint8_t* username, uint64_t funds){
 	FILE* wealthDB = fopen(fileName, "w");
 	free(fileName);
 	free(folder);
-	while(fgets(user, 8, userDB)){
+	while(fgets(user, 5, userDB)){
 		if(user[0] != username[0]
 		|| user[1] != username[1]
 		|| user[2] != username[2]
 		|| user[3] != username[3]
-		|| user[4] != username[4]
-		|| user[5] != username[5]
-		|| user[6] != username[6]
-		|| user[7] != username[7]){
+		|| user[4] != username[4]){
 			fseek(wealthDB,8,SEEK_CUR);
 			continue;
 		}
@@ -125,13 +122,13 @@ uint8_t addUsername(uint8_t* username, uint8_t* pubKey){
 	if(!userDB || !wealthDB || !pubKeyDB) return 0;
 	free(fileName);
 	free(folder);
-	while(fgets(user, 8, userDB)){
+	while(fgets(user, 5, userDB)){
 		fseek(wealthDB,8,SEEK_CUR);
 		fseek(pubKeyDB,8,SEEK_CUR);
 	}
-	fprintf(userDB, username, 8);
 	fprintf(wealthDB, "00000000", 8);
 	fprintf(pubKeyDB, pubKey, 48);
+	fprintf(userDB, username, 5);
 	fclose(userDB);
 	fclose(wealthDB);
 	fclose(pubKeyDB);
