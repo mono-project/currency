@@ -12,17 +12,17 @@ char* getFolder(){
 uint8_t* getTx(uint64_t txNumber){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
-	char* tx = (char*)malloc(20);
+	char* tx = (char*)malloc(90);
 	snprintf(fileName, 256, folder, "txDB");
 	FILE* txDB = fopen(fileName, "r");
 	free(fileName);
 	free(folder);
 
 	uint64_t txCnt = 0;
-	while(fgets(tx, 20, txDB)) txCnt++;
+	while(fgets(tx, 90, txDB)) txCnt++;
 	if(txCnt < txNumber) return 0;
-	fseek(txDB, txNumber*20, SEEK_SET);	
-	fgets(tx, 20, txDB)
+	fseek(txDB, txNumber*90, SEEK_SET);	
+	fgets(tx, 90, txDB)
 	fclose(txDB);
 	return(tx);
 }
