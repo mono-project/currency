@@ -46,7 +46,7 @@ uint8_t changeFundsForUsername(uint8_t* username, int64_t change){
 void setChangeToNull(){
 	snprintf(fileName, 256, folder, "wealthChangeDB");
 	FILE* wealthDB = fopen(fileName, "w");
-	while(fprintf(wealthDB, "00000000", 8));
+	while(fprintf(wealthDB, "\x00\x00\x00\x00\x00\x00\x00\x00", 8));
 	fclose(wealthDB);
 	return;
 }
@@ -80,7 +80,7 @@ uint8_t addChangeToFunds(){
 		if(((*change)>>63)) *funds += change;
 		else *funds -= change;
 		fseek(wealthDB, -8, SEEK_CUR)
-		fprintf(wealthDB, "00000000", 8)
+		fprintf(wealthDB, "\x00\x00\x00\x00\x00\x00\x00\x00", 8)
 	}
 	free(fileName);
 	free(folder);
@@ -105,9 +105,9 @@ uint8_t addUsername(uint8_t* username, uint8_t* pubKey){
 		fseek(wealthDB,8,SEEK_CUR);
 		fseek(pubKeyDB,8,SEEK_CUR);
 	}
-	fprintf(wealthDB, "00000000", 8);
 	fprintf(pubKeyDB, pubKey, 48);
 	fprintf(userDB, username, 5);
+	fprintf(wealthDB, "\x00\x00\x00\x00\x00\x00\x00\x00", 8);
 	fclose(userDB);
 	fclose(wealthDB);
 	fclose(pubKeyDB);
