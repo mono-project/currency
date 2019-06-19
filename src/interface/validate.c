@@ -14,8 +14,8 @@ uint8_t processTransaction(uint8_t* transaction){
 		uint64_t prevFunds = getFundsForUsername(&transaction[16]);
 		if(!prevFunds) return 0;
 		uint64_t amount = *(uint64_t*)&transaction[8];
-		if(!changeFundsForUsername(&transaction[16], amount, 0)) return 0; // - from sender
-		if(!changeFundsForUsername(&transaction[21], amount, 1)) return 0; // + for receiver
+		if(!changeFundsForUsername(&transaction[16],  amount)) return 0; // - from sender
+		if(!changeFundsForUsername(&transaction[21], -amount)) return 0; // + for receiver
 	} else {
 		addUsername(&transaction[8], &transaction[40]);
 	}
