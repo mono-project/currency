@@ -103,11 +103,11 @@ uint8_t addUsername(uint8_t* username, uint8_t* pubKey){
 	free(folder);
 	while(fgets(user, 5, userDB)){
 		fseek(wealthDB,8,SEEK_CUR);
-		fseek(pubKeyDB,8,SEEK_CUR);
+		fseek(pubKeyDB,32,SEEK_CUR);
 	}
-	fprintf(pubKeyDB, pubKey, 48);
 	fprintf(userDB, username, 5);
 	fprintf(wealthDB, "\x00\x00\x00\x00\x00\x00\x00\x00", 8);
+	fprintf(pubKeyDB, pubKey, 32);
 	fclose(userDB);
 	fclose(wealthDB);
 	fclose(pubKeyDB);
