@@ -1,6 +1,5 @@
 #### ToDo
 - [ ] **Core**
-- [ ] Make chainsplits -> Reorgs impossible
 - [ ] Rework database
 - [ ] Rework interface
 - [ ] **Network**
