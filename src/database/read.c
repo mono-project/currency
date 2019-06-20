@@ -182,23 +182,19 @@ uint8_t* getPubKeyForUsername(uint8_t* username){
 	return 0;
 }
 
-uint8_t* getLastBlockHash(){
+uint8_t* getLastStateHash(){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
-	char* header = (char*)malloc(96);
+	char* file   = (char*)malloc(1024);
 	char* hash   = (char*)malloc(64);
-	uint64_t cnt = 0;
-	snprintf(fileName, 256, folder, "headerDB");
-	FILE* headerDB = fopen(fileName, "r");
+	snprintf(fileName, 256, folder, "txDB");
+	FILE* txDB = fopen(fileName, "r");
 	free(fileName);
 	free(folder);
-	while(fgets(header, 96, headerDB)) cnt++;
-	if(!cnt) return 0;
-	fseek(headerDB, (cnt-1)*96, SEEK_SET);
-	fgets(header, 96, headerDB);
-	blakenl(header, 96, hash);
-	free(header);
-	fclose(headerDB);
+	fgets(file, 1024, txDB); blakenl(file, 1024, hash);
+	while(fgets(file, 1024, txDB)) blakesl(file, 1024, hash, 64, hash);
+	free(file);
+	fclose(txDB);
 	return(hash);
 }
 
