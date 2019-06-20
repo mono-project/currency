@@ -2,6 +2,9 @@
 - [x] **Core**
 - [x] Rework database
 - [x] Rework interface
+- [ ] Improve Database, remove redundant functions
+- [ ] Improve interface, remove redundant functions
+- [ ] Improve validation, add EdDSA
 - [ ] **Network**
 - [ ] Add block when received
 - [ ] Add protocol to indicate when data will be transfered
