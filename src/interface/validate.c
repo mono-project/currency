@@ -6,19 +6,21 @@
 #include "../crypto/eddsa.h"
 
 uint8_t validateSignature(uint8_t* transaction){
-	//TODO if(missmatch) return 0
+	uint8_t* pubKey = getPubKeyForUsername(&transaction[16]);
+	uint8_t  out = verifySignature(&transaction[26], publicKey, transaction, 26);
+	free(pubKey);
+	return(out);
 }
 
 uint8_t processTransaction(uint8_t* transaction){
+	if(!validateSignature(transaction)) return 0;
 	if(*(uint64_t*)&transaction){
 		uint64_t prevFunds = getFundsForUsername(&transaction[16]);
 		if(!prevFunds) return 0;
 		uint64_t amount = *(uint64_t*)&transaction[8];
 		if(!changeFundsForUsername(&transaction[16],  amount)) return 0; // - from sender
 		if(!changeFundsForUsername(&transaction[21], -amount)) return 0; // + for receiver
-	} else {
-		addUsername(&transaction[8], &transaction[40]);
-	}
+	}else addUsername(&transaction[8], &transaction[40]);
 	return 1;
 }
 
