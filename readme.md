@@ -1,7 +1,7 @@
 #### ToDo
-- [ ] **Core**
-- [ ] Rework database
-- [ ] Rework interface
+- [x] **Core**
+- [x] Rework database
+- [x] Rework interface
 - [ ] **Network**
 - [ ] Add block when received
 - [ ] Add protocol to indicate when data will be transfered
