@@ -191,28 +191,32 @@ uint64_t getTotalFundchange(){
 	return(tmp==0);
 }
 
-uint64_t* getPubKeys(){
+uint8_t* getPubKeyForUsername(uint8_t* username){
 	char* folder = getFolder();
 	char* fileName = (char*)malloc(256);
-	uint64_t* pubKey = (uint64_t*)malloc(32);
+	uint8_t* pubKey = (uint8_t*)malloc(32);
+	snprintf(fileName, 256, folder, "userDB");
+	FILE* userDB = fopen(fileName, "r");
 	snprintf(fileName, 256, folder, "pubKeyDB");
 	FILE* pubKeyDB = fopen(fileName, "r");
 	free(fileName);
 	free(folder);
-
-	uint32_t keyCount = 0;
-	while(fgets(pubKey, 32, pubKeyDB)) keyCount++;
-	fseek(pubKeyDB, 0, SEEK_SET)
-	uint64_t* pubKeys = (uint64_t*)malloc(keyCount*32);
-	for(uint32_t i=0;i<keyCount;i++){
-		fgets(pubKey, 5, pubKeyDB)
-		for(uint8_t j=0;j<5;j++){
-			pubKeys[i] += pubKey[j] << (5*j);
-		}
+	while(fgets(user, 5, userDB)){
+		if(!user) break;
+		fgets(pubKey, 32, pubKeyDB);
+		if(user[0] != username[0]
+		|| user[1] != username[1]
+		|| user[2] != username[2]
+		|| user[3] != username[3]
+		|| user[4] != username[4]) continue;
+		fclose(userDB);
+		fclose(pubKeyDB);
+		return pubKey;
 	}
 	free(pubKey);
+	fclose(userDB);
 	fclose(pubKeyDB);
-	return(pubKeys);
+	return 0;
 }
 
 uint8_t* getLastBlockHash(){
