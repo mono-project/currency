@@ -69,5 +69,6 @@ uint8_t validateBlock(uint8_t* block, uint32_t height){
 	uint32_t timestamp = *(uint32_t*)&block[72];
 	if(!validateTransactions(block)) return 0;
 	if(!validateInternalHash(block)) return 0;
+
 	return 1;
 }
