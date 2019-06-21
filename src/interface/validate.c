@@ -1,6 +1,5 @@
 #include "interface.h"
 #include "../currency.h"
-#include "../Crypto/squash.h" 
 #include "../Database/read.h" 
 #include "../Database/write.h"
 #include "../crypto/eddsa.h"
@@ -44,19 +43,19 @@ uint8_t validateTransactions(uint8_t* block, uint64_t txMemory){
 }
 
 uint8_t* hashBlock(uint8_t* block, uint32_t height){
-	uint8_t*  hash    = (uint8_t*)malloc(64);
+	uint8_t*  hash = (uint8_t*)malloc(64);
 	if(!height){
 		blakeln(block, 96, hash);
 	} else {
 		uint64_t txMemory = *(uint64_t*)&out[64];
-		squash_light_api(block, 96+txMemory, hash, height);
+		blakeln(block, 96+txMemory, hash);
 	}
 	return hash;
 }
 
 uint8_t validateInternalHash(uint8_t* block){
-	uint8_t* hash      = getLastBlockHash();
-	uint64_t len = 96;
+	uint8_t* hash = getLastBlockHash();
+	uint64_t len  = 96;
 	uint64_t size = 0;
 	blakesl(block, 96, hash, 64, hash);
 	blakesl(&block[96], txMemory, hash, 64, hash);
