@@ -1,3 +1,6 @@
+// Copyright (c) Luke Parker, distributed under the MIT License. For more information, see LICENSE.
+// Copyright (c) 2019, The Aptum Project
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -33,10 +36,4 @@ void urand32(uint8_t* bytes){
     fclose(urand);
 #endif
     return bytes;
-}
-
-int main(){
-	uint8_t* seed = urand(64);
-	for(uint8_t i=0; i<64; i++) printf("%02x",seed[i]);
-	printf("\n");
 }
